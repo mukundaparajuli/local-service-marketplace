@@ -1,0 +1,125 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int              @id @default(autoincrement())
+  email        String           @unique
+  password     String
+  firstName    String?
+  lastName     String?
+  username     String           @unique
+  phoneNumber  String?
+  profileImage String?
+  isActive     Boolean          @default(true)
+  role         UserRole         @default(CUSTOMER)
+  profile      ProviderProfile?
+  isVerified   Boolean          @default(false)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  // relationships
+  bookings Booking[]
+  reviews  Review[]
+  Service  Service[]
+}
+
+model ProviderProfile {
+  id                Int      @id @default(autoincrement())
+  businessName      String
+  description       String   @db.Text
+  address           String?
+  city              String
+  state             String
+  zipCode           String?
+  latitude          Float?
+  Longitude         Float?
+  operatingHours    Json?
+  serviceRadius     Int? //service radius in miles/ kilometers
+  acceptsHomeVisist Boolean  @default(false)
+  hasPhysicalStore  Boolean  @default(false)
+  averageRating     Float
+  totalReviews      Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  contactInfo       Json? //{phone?, website?, socialmedialinks?}
+
+  // relationships
+  user             User              @relation(fields: [userId], references: [id])
+  userId           Int               @unique
+  serviceOfferings Service[]
+  serviceLocations ServiceLocation[]
+  bookings         Booking[]
+}
+
+model Booking {
+  id               Int           @id @default(autoincrement())
+  status           BookingStatus
+  totalCost        Decimal       @db.Decimal(10, 2)
+  scheduledDate    DateTime
+  scheduledEndTime DateTime
+  location         String? //address or provider location
+  notes            String?       @db.Text
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  client            User?            @relation(fields: [userId], references: [id])
+  userId            Int?
+  providerProfile   ProviderProfile? @relation(fields: [providerProfileId], references: [id])
+  providerProfileId Int?
+  service           Service?         @relation(fields: [serviceId], references: [id])
+  serviceId         Int?
+  review            Review?
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  rating    Int
+  comment   String?  @db.Text
+  createdAt DateTime @default(now())
+
+  User      User?    @relation(fields: [userId], references: [id])
+  userId    Int?
+  Booking   Booking? @relation(fields: [bookingId], references: [id])
+  bookingId Int?     @unique
+}
+
+model ServiceLocation {
+  id                Int              @id @default(autoincrement())
+  ProviderProfile   ProviderProfile? @relation(fields: [providerProfileId], references: [id])
+  providerProfileId Int?
+}
+
+model Service {
+  id                Int              @id @default(autoincrement())
+  User              User?            @relation(fields: [userId], references: [id])
+  userId            Int?
+  ProviderProfile   ProviderProfile? @relation(fields: [providerProfileId], references: [id])
+  providerProfileId Int?
+  Booking           Booking[]
+}
+
+enum UserRole {
+  CUSTOMER
+  PROVIDER
+  ADMIN
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
