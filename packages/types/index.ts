@@ -1,7 +1,12 @@
 export interface User {
     id: number;
-    email: string;
-    role: 'provider' | 'customer';
+    email: string,
+    firstName?: string | null
+    lastName?: string | null
+    username: string
+    phoneNumber?: string | null;
+    profileImage?: string | null;
+    role: UserRole;
 }
 
 export interface Service {
@@ -9,4 +14,10 @@ export interface Service {
     title: string;
     hourlyRate: number;
     providerId: number;
+}
+
+export enum UserRole {
+    CUSTOMER,
+    PROVIDER,
+    ADMIN
 }
