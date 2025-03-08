@@ -30,9 +30,11 @@ model User {
   updatedAt    DateTime         @updatedAt
 
   // relationships
-  bookings Booking[]
-  reviews  Review[]
-  Service  Service[]
+  bookings         Booking[]         @relation("ClientBookings")
+  reviews          Review[]
+  Service          ServiceOffering[]
+  sentMessages     Message[]         @relation(name: "SentMessages")
+  receivedMessages Message[]         @relation(name: "ReceivedMessages")
 }
 
 model ProviderProfile {
@@ -49,18 +51,78 @@ model ProviderProfile {
   serviceRadius     Int? //service radius in miles/ kilometers
   acceptsHomeVisist Boolean  @default(false)
   hasPhysicalStore  Boolean  @default(false)
+  isBlocked         Boolean  @default(false)
   averageRating     Float
   totalReviews      Int      @default(0)
+  contactInfo       Json? //{phone?, website?, socialmedialinks?}
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
-  contactInfo       Json? //{phone?, website?, socialmedialinks?}
 
   // relationships
-  user             User              @relation(fields: [userId], references: [id])
-  userId           Int               @unique
-  serviceOfferings Service[]
-  serviceLocations ServiceLocation[]
-  bookings         Booking[]
+  user                  User                    @relation(fields: [userId], references: [id])
+  userId                Int                     @unique
+  serviceOfferings      ServiceOffering[]
+  serviceLocations      ServiceLocation[]
+  Booking               Booking[]               @relation("ProviderBookings")
+  CategoriesOnProviders CategoriesOnProviders[]
+}
+
+model ServiceOffering {
+  id          Int         @id @default(autoincrement())
+  name        String
+  description String
+  price       Decimal     @db.Decimal(10, 2)
+  pricingType PricingType
+  duration    Int? //estimated duration in minutes
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  User                 User?               @relation(fields: [userId], references: [id])
+  userId               Int?
+  ProviderProfile      ProviderProfile?    @relation(fields: [providerProfileId], references: [id])
+  providerProfileId    Int?
+  Booking              Booking[]
+  ServiceSubCategory   ServiceSubCategory? @relation(fields: [serviceSubCategoryId], references: [id])
+  serviceSubCategoryId String?
+}
+
+model ServiceCategory {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?  @db.Text
+  icon        String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  providers     CategoriesOnProviders[]
+  subCategories ServiceSubCategory[]
+}
+
+model ServiceSubCategory {
+  id          String   @id @default(uuid())
+  name        String
+  description String?  @db.Text
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  category   ServiceCategory   @relation(fields: [categoryId], references: [id])
+  categoryId String
+  services   ServiceOffering[]
+
+  @@unique([name, categoryId])
+}
+
+model CategoriesOnProviders {
+  provider   ProviderProfile @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  providerId Int
+  category   ServiceCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId String
+  assignedAt DateTime        @default(now())
+
+  @@id([providerId, categoryId])
 }
 
 model Booking {
@@ -74,13 +136,27 @@ model Booking {
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
 
-  client            User?            @relation(fields: [userId], references: [id])
+  client            User?            @relation("ClientBookings", fields: [userId], references: [id])
   userId            Int?
-  providerProfile   ProviderProfile? @relation(fields: [providerProfileId], references: [id])
+  providerProfile   ProviderProfile? @relation("ProviderBookings", fields: [providerProfileId], references: [id])
   providerProfileId Int?
-  service           Service?         @relation(fields: [serviceId], references: [id])
+  service           ServiceOffering? @relation(fields: [serviceId], references: [id])
   serviceId         Int?
+  payment           Payment?
   review            Review?
+}
+
+model Payment {
+  id                 String        @id @default(uuid())
+  amount             Decimal       @db.Decimal(10, 2)
+  status             PaymentStatus @default(PENDING)
+  paymentMethod      String?
+  transactionId      String
+  transactionDetails Json?
+  createdAt          DateTime      @default(now())
+
+  booking   Booking @relation(fields: [bookingId], references: [id])
+  bookingId Int     @unique
 }
 
 model Review {
@@ -96,18 +172,29 @@ model Review {
 }
 
 model ServiceLocation {
-  id                Int              @id @default(autoincrement())
+  id        Int     @id @default(autoincrement())
+  address   String
+  city      String
+  state     String
+  zipCode   String
+  latitude  Float?
+  longitude Float?
+  isPrimary Boolean @default(false)
+
   ProviderProfile   ProviderProfile? @relation(fields: [providerProfileId], references: [id])
   providerProfileId Int?
 }
 
-model Service {
-  id                Int              @id @default(autoincrement())
-  User              User?            @relation(fields: [userId], references: [id])
-  userId            Int?
-  ProviderProfile   ProviderProfile? @relation(fields: [providerProfileId], references: [id])
-  providerProfileId Int?
-  Booking           Booking[]
+model Message {
+  id        String   @id @default(uuid())
+  content   String   @db.Text
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  sender     User @relation("SentMessages", fields: [senderId], references: [id])
+  senderId   Int
+  receiver   User @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  receiverId Int
 }
 
 enum UserRole {
@@ -122,4 +209,17 @@ enum BookingStatus {
   IN_PROGRESS
   COMPLETED
   CANCELLED
+}
+
+enum PricingType {
+  FIXED
+  HOURLY
+  STARTING_AT
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  REFUNDED
+  FAILED
 }
