@@ -1,7 +1,14 @@
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@marketplace/types";
 import { IsEmail, IsString, MinLength } from "class-validator";
 
 export class RegisterDto {
+
+    @IsString()
+    firstName?: string;
+
+    @IsString()
+    lastName?: string;
+
     @IsString()
     username!: string;
 
@@ -13,5 +20,5 @@ export class RegisterDto {
     password!: string;
 
     @IsString()
-    role!: UserRole;
+    role?: UserRole;
 }

@@ -7,6 +7,10 @@ export interface User {
     phoneNumber?: string | null;
     profileImage?: string | null;
     role: UserRole;
+    isVerified: boolean;
+    isActive: boolean;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface Service {
