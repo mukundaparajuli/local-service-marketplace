@@ -25,6 +25,27 @@ export interface User {
     updatedAt: Date;
 }
 
+export interface ProviderProfile {
+    businessName: string;
+    description?: string;
+    address?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+    latitude?: number;
+    longitude?: number;
+    operatingHours?: string;
+    serviceRadius?: number;
+    acceptsHomeVisits?: boolean;
+    hasPhysicalStore?: boolean;
+    isBlocked?: boolean;
+    averageRating?: number;
+    totalReviews?: number;
+    contactInfo?: string;
+    userId: number;
+}
+
+
 export interface Service {
     id: number;
     name: string;

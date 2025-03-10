@@ -2,14 +2,13 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Requ
 import { ServiceService } from './service.service';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
-import { RoleGuard } from 'src/role.guard';
-import { Roles } from 'src/role.decorator';
+// import { RoleGuard } from 'src/role.guard';
 import { UserRole } from '@marketplace/types';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Roles } from 'src/roles/role.decorator';
 
 @Controller('service')
 @UseGuards(JwtAuthGuard)
-@UseGuards(RoleGuard)
 export class ServiceController {
   constructor(private readonly serviceService: ServiceService) { }
 

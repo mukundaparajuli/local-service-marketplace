@@ -13,6 +13,8 @@ export class ServiceService {
 
   async create(data: CreateServiceDto, req: Request): Promise<Service> {
     const user = req.user;
+
+    console.log("user = ", user);
     const createdService = await this.prisma.serviceOffering.create({
       data: {
         name: data.name,
@@ -23,6 +25,7 @@ export class ServiceService {
         providerProfileId: user.id
       }
     })
+    console.log("service= ", createdService);
     return {
       ...createdService,
       price: createdService.price.toNumber(),
