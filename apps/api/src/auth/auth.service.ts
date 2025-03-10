@@ -30,7 +30,6 @@ export class AuthService {
         })
         const { password, ...prismaResult } = user;
 
-        // Map Prisma result to your User interface
         const result: User = {
             ...prismaResult,
             role: prismaResult.role as unknown as UserRole,
