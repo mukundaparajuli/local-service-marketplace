@@ -1,6 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
-import * as types from '@marketplace/types';
 
 @Controller()
 export class AppController {

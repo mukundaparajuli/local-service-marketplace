@@ -31,7 +31,8 @@ export class UserController {
   }
 
   @Patch(':id/role')
-  updateUserRole(@Param('id') id: string, data: UpdateRoleDto) {
-    return this.userService.updateUserRole(+id, data)
+  updateUserRole(@Param('id') id: string, @Body() data: UpdateRoleDto) {
+    console.log("data = ", id, data);
+    return this.userService.updateUserRole(data, +id)
   }
 }

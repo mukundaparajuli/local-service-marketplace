@@ -26,22 +26,25 @@ export interface User {
 }
 
 export interface ProviderProfile {
+    id: number;
     businessName: string;
-    description?: string;
-    address?: string;
-    city?: string;
-    state?: string;
-    zipCode?: string;
-    latitude?: number;
-    longitude?: number;
-    operatingHours?: string;
-    serviceRadius?: number;
-    acceptsHomeVisits?: boolean;
-    hasPhysicalStore?: boolean;
-    isBlocked?: boolean;
-    averageRating?: number;
-    totalReviews?: number;
-    contactInfo?: string;
+    description: string;
+    address?: string | null;
+    city: string;
+    state: string;
+    zipCode?: string | null;
+    latitude?: number | null;
+    longitude?: number | null;
+    operatingHours?: any;
+    serviceRadius?: number | null;
+    acceptsHomeVisits: boolean;
+    hasPhysicalStore: boolean;
+    isBlocked: boolean;
+    averageRating: number;
+    totalReviews: number;
+    contactInfo?: any;
+    createdAt: Date;
+    updatedAt: Date;
     userId: number;
 }
 

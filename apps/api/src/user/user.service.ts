@@ -56,71 +56,53 @@ export class UserService {
     }
   }
 
-  async updateUserRole(id: number, data: UpdateRoleDto) {
-    const { role, providerProfile } = data as { role: UserRole, providerProfile?: ProviderProfile };
+  async updateUserRole(data: UpdateRoleDto, id: number): Promise<ProviderProfile> {
+    let createdProviderProfile: ProviderProfile;
+    console.log("data=", data);
+    const { role, providerProfile } = data as { role: UserRole, providerProfile?: CreateProviderProfileDto };
 
-    // find user
     const user = await this.prisma.user.findFirst({
-      where: {
-        id
-      }
-    })
+      where: { id }
+    });
 
     if (!user) {
-      throw new NotFoundException("User Not Found!")
+      throw new NotFoundException("User Not Found!");
     }
 
-    // update the role and create a provider profile
-    await this.prisma.$transaction(async (prisma) => {
-      // update the role to provider
-      const user = await prisma.user.findUnique({
-        where: {
-          id,
-        }
-      })
+    // Wrap transaction in a return statement
+    return await this.prisma.$transaction(async (prisma) => {
+      const existingUser = await prisma.user.findUnique({ where: { id } });
 
-      if (!user) {
-        throw new NotFoundException("User Not Found!")
+      if (!existingUser) {
+        throw new NotFoundException("User Not Found!");
       }
 
-      const updatedUser = await prisma.user.update({
-        where: {
-          id
-        },
-        data: {
-          role: role as $Enums.UserRole
-        }
-      })
+      await prisma.user.update({
+        where: { id },
+        data: { role: role as $Enums.UserRole },
+      });
 
-      console.log(updatedUser)
-
-      // check if provider profile has been provided
-      //  if provider profile has not been provided import data from the user
-      if (role === UserRole.PROVIDER && !providerProfile) {
-        const existingProvider = await prisma.providerProfile.findFirst({
-          where: {
-            userId: id,
-          }
-        })
+      if (role === UserRole.PROVIDER) {
+        const existingProvider = await prisma.providerProfile.findFirst({ where: { userId: id } });
 
         if (existingProvider) {
           throw new NotFoundException('Provider profile already exists for this user');
         }
 
         if (!providerProfile) {
-          const createdProviderProfile = await prisma.providerProfile.create({
+          createdProviderProfile = await prisma.providerProfile.create({
             data: {
-              businessName: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username, // Fallback to username
-              description: `Profile for ${user.username}`, // Default description
-              address: user.phoneNumber ? undefined : 'Not provided', // Optional, could be omitted
+              businessName: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username,
+              description: `Profile for ${user.username}`,
+              address: undefined,
               city: 'Unknown',
               state: 'Unknown',
               zipCode: undefined,
               latitude: undefined,
-              Longitude: undefined,
+              longitude: undefined,
               operatingHours: undefined,
               serviceRadius: undefined,
-              acceptsHomeVisist: false,
+              acceptsHomeVisits: false,
               hasPhysicalStore: false,
               isBlocked: false,
               averageRating: 0,
@@ -129,15 +111,14 @@ export class UserService {
                 ? JSON.parse(`{"phone": "${user.phoneNumber}"}`)
                 : undefined,
               userId: id,
-            }
-          })
-
-          console.log("created provider profile", createdProviderProfile);
+            },
+          });
         } else {
-          // if provider profile is provided
-          // TODO: CREATE A PROVIDER PROFILE WITH THE PROVIDED PROVIDER PROFILE INFO
+          createdProviderProfile = await this.providerProfile.create(providerProfile, id);
         }
-      };
-    })
+      }
+
+      return createdProviderProfile;
+    });
   }
 }

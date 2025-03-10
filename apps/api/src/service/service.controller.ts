@@ -6,14 +6,15 @@ import { UpdateServiceDto } from './dto/update-service.dto';
 import { UserRole } from '@marketplace/types';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Roles } from 'src/roles/role.decorator';
+import { RoleGuard } from 'src/roles/role.guard';
 
 @Controller('service')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RoleGuard)
 export class ServiceController {
   constructor(private readonly serviceService: ServiceService) { }
 
   @Post()
-  @Roles(UserRole.CUSTOMER)
+  @Roles(UserRole.PROVIDER)
   create(@Body() createServiceDto: CreateServiceDto, @Req() req: Request) {
     console.log("req.user", req.user)
     return this.serviceService.create(createServiceDto, req);

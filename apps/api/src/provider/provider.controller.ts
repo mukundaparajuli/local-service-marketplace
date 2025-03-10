@@ -7,9 +7,9 @@ import { UpdateProviderProfileDto } from './dto/update-provider.dto';
 export class ProviderController {
   constructor(private readonly providerService: ProviderService) { }
 
-  @Post()
-  create(@Body() createProviderDto: CreateProviderProfileDto) {
-    return this.providerService.create(createProviderDto);
+  @Post(':id')
+  create(@Body() createProviderDto: CreateProviderProfileDto, @Param('id') id: string) {
+    return this.providerService.create(createProviderDto, +id);
   }
 
   @Get()
@@ -30,10 +30,5 @@ export class ProviderController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.providerService.remove(+id);
-  }
-
-  @Patch(':id')
-  updateRole(@Param('id') id: string) {
-    return this.providerService.updateRole(+id);
   }
 }

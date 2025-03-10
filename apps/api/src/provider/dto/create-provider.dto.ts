@@ -8,6 +8,7 @@ export class CreateProviderProfileDto {
     description!: string;
 
     @IsString()
+    @IsOptional()
     address!: string
 
     @IsString()

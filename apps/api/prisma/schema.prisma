@@ -46,10 +46,10 @@ model ProviderProfile {
   state             String
   zipCode           String?
   latitude          Float?
-  Longitude         Float?
+  longitude         Float?
   operatingHours    Json?
   serviceRadius     Int? //service radius in miles/ kilometers
-  acceptsHomeVisist Boolean  @default(false)
+  acceptsHomeVisits Boolean  @default(false)
   hasPhysicalStore  Boolean  @default(false)
   isBlocked         Boolean  @default(false)
   averageRating     Float
