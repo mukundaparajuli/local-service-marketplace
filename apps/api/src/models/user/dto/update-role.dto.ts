@@ -1,7 +1,7 @@
 import { UserRole } from "@marketplace/types";
 import { Type } from "class-transformer";
 import { IsEnum, IsOptional } from "class-validator";
-import { CreateProviderProfileDto } from "src/provider/dto/create-provider.dto";
+import { CreateProviderProfileDto } from "src/models/provider/dto/create-provider.dto";
 
 export class UpdateRoleDto {
     @IsEnum(UserRole)

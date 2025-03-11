@@ -3,9 +3,9 @@ import { PrismaService } from 'src/common/prisma/prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { $Enums, Prisma } from '@prisma/client';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import { ProviderService } from 'src/provider/provider.service';
+import { ProviderService } from 'src/models/provider/provider.service';
 import { ProviderProfile, UserRole } from '@marketplace/types';
-import { CreateProviderProfileDto } from 'src/provider/dto/create-provider.dto';
+import { CreateProviderProfileDto } from 'src/models/provider/dto/create-provider.dto';
 
 @Injectable()
 export class UserService {

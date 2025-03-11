@@ -16,7 +16,6 @@ export class ServiceController {
   @Post()
   @Roles(UserRole.PROVIDER)
   create(@Body() createServiceDto: CreateServiceDto, @Req() req: Request) {
-    console.log("req.user", req.user)
     return this.serviceService.create(createServiceDto, req);
   }
 
@@ -30,6 +29,7 @@ export class ServiceController {
     return this.serviceService.findOne(+id);
   }
 
+  @Roles(UserRole.PROVIDER)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateServiceDto: UpdateServiceDto) {
     return this.serviceService.update(+id, updateServiceDto);

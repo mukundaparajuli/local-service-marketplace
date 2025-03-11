@@ -42,8 +42,23 @@ export class ServiceService {
     return `This action returns a #${id} service`;
   }
 
-  update(id: number, updateServiceDto: UpdateServiceDto) {
-    return `This action updates a #${id} service`;
+  async update(id: number, updateServiceDto: UpdateServiceDto): Promise<Service> {
+    try {
+      const updatedService = await this.prisma.serviceOffering.update({
+        where: {
+          id,
+        },
+        data: updateServiceDto
+      });
+      return {
+        ...updatedService,
+        price: updatedService.price.toNumber(),
+        pricingType: updatedService.pricingType as PricingType,
+        providerId: updatedService.providerProfileId ?? 0,
+      };
+    } catch (error) {
+      throw error;
+    }
   }
 
   remove(id: number) {
