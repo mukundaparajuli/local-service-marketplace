@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, Request } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, Request } from '@nestjs/common';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { $Enums, Prisma } from '@prisma/client';
@@ -9,6 +9,7 @@ import { CreateProviderProfileDto } from 'src/models/provider/dto/create-provide
 
 @Injectable()
 export class UserService {
+  private readonly logger = new Logger(UserService.name)
   constructor(
     private prisma: PrismaService,
     private providerProfile: ProviderService
@@ -83,11 +84,12 @@ export class UserService {
       });
 
       if (role === UserRole.PROVIDER) {
-        const existingProvider = await prisma.providerProfile.findFirst({ where: { userId: id } });
+        this.logger.log(role);
+        // const existingProvider = await prisma.providerProfile.findFirst({ where: { userId: id } });
 
-        if (existingProvider) {
-          throw new NotFoundException('Provider profile already exists for this user');
-        }
+        // if (existingProvider) {
+        // throw new NotFoundException('Provider profile already exists for this user');
+        // }
 
         if (!providerProfile) {
           createdProviderProfile = await prisma.providerProfile.create({
@@ -110,7 +112,7 @@ export class UserService {
               contactInfo: user.phoneNumber
                 ? JSON.parse(`{"phone": "${user.phoneNumber}"}`)
                 : undefined,
-              userId: id,
+              user: { connect: { id } },
             },
           });
         } else {

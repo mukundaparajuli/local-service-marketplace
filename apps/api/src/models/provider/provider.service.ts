@@ -10,7 +10,8 @@ export class ProviderService {
     private prisma: PrismaService
   ) { }
 
-  // we might get the data to create provider profile directly from the controller or by the user.service when the user role is changed to provider
+  // we might get the data to create provider profile directly from the
+  //  controller or by the user.service when the user role is changed to provider
   async create(data: CreateProviderProfileDto, id: number): Promise<ProviderProfile> {
     return await this.prisma.providerProfile.create({
       data: {

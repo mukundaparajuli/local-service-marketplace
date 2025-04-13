@@ -133,6 +133,7 @@ model Booking {
   scheduledEndTime DateTime
   location         String? //address or provider location
   notes            String?       @db.Text
+  chatStatus       ChatStatus    @default(PENDING)
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
 
@@ -222,4 +223,9 @@ enum PaymentStatus {
   COMPLETED
   REFUNDED
   FAILED
+}
+
+enum ChatStatus {
+  PENDING
+  ENABLED
 }
