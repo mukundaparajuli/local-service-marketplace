@@ -11,7 +11,16 @@ import { BookingModule } from './models/booking/booking.module';
 import { MessagesModule } from './models/messages/messages.module';
 
 @Module({
-  imports: [AuthModule, PrismaService, UserModule, ConfigModule.forRoot(), ServiceModule, ProviderModule, BookingModule, MessagesModule],
+  imports: [
+    AuthModule,
+    PrismaService,
+    UserModule,
+    ConfigModule.forRoot(),
+    ServiceModule,
+    ProviderModule,
+    BookingModule,
+    MessagesModule
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
