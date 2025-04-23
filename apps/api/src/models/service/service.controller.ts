@@ -7,6 +7,7 @@ import { UserRole } from '@marketplace/types';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Roles } from 'src/roles/role.decorator';
 import { RoleGuard } from 'src/roles/role.guard';
+import { GetProviderServicesDto } from './dto/get-provider-services.dto';
 
 @Controller('service')
 @UseGuards(JwtAuthGuard, RoleGuard)
@@ -20,13 +21,13 @@ export class ServiceController {
   }
 
   @Get()
-  findAll() {
-    return this.serviceService.findAll();
+  findAll(@Body() getProviderServicesDto: GetProviderServicesDto) {
+    return this.serviceService.findAll(getProviderServicesDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.serviceService.findOne(+id);
+  @Get(':serviceId')
+  findOne(@Param('serviceId') serviceId: string) {
+    return this.serviceService.findOne(+serviceId);
   }
 
   @Roles(UserRole.PROVIDER)
@@ -35,6 +36,7 @@ export class ServiceController {
     return this.serviceService.update(+id, updateServiceDto);
   }
 
+  @Roles(UserRole.ADMIN, UserRole.PROVIDER)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.serviceService.remove(+id);

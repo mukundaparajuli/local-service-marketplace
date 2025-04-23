@@ -9,6 +9,8 @@ import { ServiceModule } from './models/service/service.module';
 import { ProviderModule } from './models/provider/provider.module';
 import { BookingModule } from './models/booking/booking.module';
 import { MessagesModule } from './models/messages/messages.module';
+import { PaymentModule } from './models/payment/payment.module';
+import { ReviewModule } from './models/review/review.module';
 
 @Module({
   imports: [
@@ -19,7 +21,9 @@ import { MessagesModule } from './models/messages/messages.module';
     ServiceModule,
     ProviderModule,
     BookingModule,
-    MessagesModule
+    MessagesModule,
+    PaymentModule,
+    ReviewModule
   ],
   controllers: [AppController],
   providers: [AppService],

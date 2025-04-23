@@ -10,6 +10,11 @@ export enum PricingType {
     STARTING_AT = "STARTING_AT"
 }
 
+export enum PaymentServiceType {
+    KHALTI = "KHALTI",
+    ESEWA = "ESEWA",
+}
+
 export interface User {
     id: number;
     email: string,

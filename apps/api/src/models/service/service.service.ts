@@ -1,12 +1,14 @@
-import { Injectable, Request } from '@nestjs/common';
+import { Injectable, Logger, Request } from '@nestjs/common';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { PricingType, Service } from '@marketplace/types';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { $Enums } from '@prisma/client';
+import { GetProviderServicesDto } from './dto/get-provider-services.dto';
 
 @Injectable()
 export class ServiceService {
+  private readonly logger = new Logger(ServiceService.name)
   constructor(
     private prisma: PrismaService
   ) { }
@@ -34,12 +36,29 @@ export class ServiceService {
     };
   }
 
-  findAll() {
-    return `This action returns all service`;
+  async findAll(getProviderServicesDto: GetProviderServicesDto) {
+    const services = await this.prisma.serviceOffering.findMany({
+      where: {
+        providerProfileId: getProviderServicesDto.providerId
+      }
+    })
+    this.logger.log("services fetched successfully", services)
+    return {
+      services
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} service`;
+  async findOne(serviceId: number) {
+    this.logger.debug(serviceId);
+    const service = await this.prisma.serviceOffering.findUnique({
+      where: {
+        id: serviceId
+      }
+    })
+    this.logger.log(`Fetched the service from the database successfully: ${service}`);
+    return {
+      service
+    }
   }
 
   async update(id: number, updateServiceDto: UpdateServiceDto): Promise<Service> {
@@ -61,7 +80,16 @@ export class ServiceService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} service`;
+  async remove(id: number) {
+
+    // T0D0: Check if the service was added by the particular provider
+    const deletedService = await this.prisma.serviceOffering.delete({
+      where: {
+        id
+      }
+    })
+
+    this.logger.log(`this service ${deletedService} has been deleted!`);
+    return {};
   }
 }

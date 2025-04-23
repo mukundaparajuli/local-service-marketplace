@@ -30,11 +30,12 @@ model User {
   updatedAt    DateTime         @updatedAt
 
   // relationships
-  bookings         Booking[]         @relation("ClientBookings")
+  bookings         Booking[] @relation("ClientBookings")
   reviews          Review[]
-  Service          ServiceOffering[]
-  sentMessages     Message[]         @relation(name: "SentMessages")
-  receivedMessages Message[]         @relation(name: "ReceivedMessages")
+  // Service          ServiceOffering[]
+  sentMessages     Message[] @relation(name: "SentMessages")
+  receivedMessages Message[] @relation(name: "ReceivedMessages")
+  payments         Payment[]
 }
 
 model ProviderProfile {
@@ -51,6 +52,7 @@ model ProviderProfile {
   serviceRadius     Int? //service radius in miles/ kilometers
   acceptsHomeVisits Boolean  @default(false)
   hasPhysicalStore  Boolean  @default(false)
+  isKYCVerified     Boolean  @default(false)
   isBlocked         Boolean  @default(false)
   averageRating     Float
   totalReviews      Int      @default(0)
@@ -65,6 +67,8 @@ model ProviderProfile {
   serviceLocations      ServiceLocation[]
   Booking               Booking[]               @relation("ProviderBookings")
   CategoriesOnProviders CategoriesOnProviders[]
+  payments              Payment[]
+  reviews               Review[]
 }
 
 model ServiceOffering {
@@ -78,8 +82,6 @@ model ServiceOffering {
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
-  User                 User?               @relation(fields: [userId], references: [id])
-  userId               Int?
   ProviderProfile      ProviderProfile?    @relation(fields: [providerProfileId], references: [id])
   providerProfileId    Int?
   Booking              Booking[]
@@ -156,8 +158,12 @@ model Payment {
   transactionDetails Json?
   createdAt          DateTime      @default(now())
 
-  booking   Booking @relation(fields: [bookingId], references: [id])
-  bookingId Int     @unique
+  booking           Booking         @relation(fields: [bookingId], references: [id])
+  bookingId         Int             @unique
+  paidBy            User            @relation(fields: [userId], references: [id])
+  userId            Int
+  paidTo            ProviderProfile @relation(fields: [providerProfileId], references: [id])
+  providerProfileId Int
 }
 
 model Review {
@@ -166,10 +172,12 @@ model Review {
   comment   String?  @db.Text
   createdAt DateTime @default(now())
 
-  User      User?    @relation(fields: [userId], references: [id])
-  userId    Int?
-  Booking   Booking? @relation(fields: [bookingId], references: [id])
-  bookingId Int?     @unique
+  User              User            @relation(fields: [userId], references: [id])
+  userId            Int
+  provider          ProviderProfile @relation(fields: [providerProfileId], references: [id])
+  providerProfileId Int
+  Booking           Booking         @relation(fields: [bookingId], references: [id])
+  bookingId         Int             @unique
 }
 
 model ServiceLocation {
