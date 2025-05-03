@@ -18,6 +18,7 @@ export class AuthService {
 
     async register(data: RegisterDto): Promise<User> {
         const hashedPassword = await bcrypt.hash(data.password, 10);
+        console.log(data);
         const user = await this.prisma.user.create({
             data: {
                 firstName: data.firstName,
@@ -25,7 +26,7 @@ export class AuthService {
                 email: data.email,
                 username: data.username,
                 password: hashedPassword,
-                role: data.role as unknown as $Enums.UserRole,
+                role: UserRole.CUSTOMER,
             }
         })
         const { password, ...prismaResult } = user;

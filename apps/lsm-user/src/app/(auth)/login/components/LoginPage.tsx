@@ -1,12 +1,9 @@
-import React from 'react'
-import LoginCard from './LoginCard'
+import { LoginForm } from "./login-form";
 
-const LoginPage = () => {
+export function LoginPage() {
     return (
-        <div className='h-[100vh] w-full flex items-center justify-center'>
-            <LoginCard />
+        <div className="w-full h-[90vh] flex justify-center items-center">
+            <LoginForm />
         </div>
     )
 }
-
-export default LoginPage
