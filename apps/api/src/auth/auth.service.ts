@@ -5,8 +5,8 @@ import { RegisterDto } from './dto/register.dto';
 import { User } from '@marketplace/types';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
-import { $Enums } from '@prisma/client';
 import { UserRole } from '@marketplace/types';
+import { Response } from 'express';
 
 
 @Injectable()
@@ -40,6 +40,7 @@ export class AuthService {
     }
 
     async validateUser(identifier: string, password: string): Promise<any> {
+        console.log(identifier, password);
         const user = await this.prisma.user.findFirst({
             where: {
                 OR:
@@ -49,7 +50,7 @@ export class AuthService {
                     ]
             }
         })
-
+        console.log(user);
         if (user && (await bcrypt.compare(password, user.password))) {
             const { password, ...result } = user;
             return result;
@@ -57,8 +58,9 @@ export class AuthService {
         return null;
     }
 
-    async login(data: LoginDto): Promise<{ access_token: string }> {
+    async login(data: LoginDto, res: Response): Promise<any> {
         const user = await this.validateUser(data.identifier, data.password);
+
         if (!user) {
             throw new UnauthorizedException('Invalid Credentials!');
         }
@@ -69,8 +71,25 @@ export class AuthService {
             role: user.role
         }
 
+        const token = this.jwtService.sign(payload);
+
+        res.cookie('token', token, {
+            httpOnly: false,
+            secure: false,
+            sameSite: "lax",
+            maxAge: 60 * 60 * 24 * 7,
+            domain: "localhost"
+        });
+
         return {
-            access_token: this.jwtService.sign(payload)
-        }
+            message: 'Login successful',
+            user: {
+                id: user.id,
+                email: user.email,
+                username: user.username,
+                role: user.role,
+                token,
+            }
+        };
     }
 }

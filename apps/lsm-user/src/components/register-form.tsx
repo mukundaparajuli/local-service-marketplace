@@ -13,7 +13,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import React, { FormEvent, useState } from "react"
 import { signIn } from "next-auth/react"
-import { register } from "@/actions/register"
+import { register } from "../../actions/register"
+import { toast } from "react-toastify"
 
 export function RegisterForm({
     className,
@@ -33,7 +34,7 @@ export function RegisterForm({
         setLoading(true)
         setError(null)
         try {
-            const response = await register({
+            const result = await register({
                 email,
                 password,
                 firstName,
@@ -41,13 +42,22 @@ export function RegisterForm({
                 username,
                 phoneNumber: phoneNumber || undefined,
             })
-            console.log(response);
+
+            if (result.error) {
+                setError(result.message)
+                toast.error(result.message)
+            } else {
+                window.location.href = "/login",
+                    console.log("Registration successful", result)
+                toast.success("Registration successful! Please log in.")
+            }
         } catch (err) {
-            setError("Registration failed. Please try again.")
+            setError("Something went wrong. Please try again.")
         } finally {
             setLoading(false)
         }
     }
+
 
     return (
         <div className={cn("flex flex-col gap-6 w-1/3", className)} {...props}>

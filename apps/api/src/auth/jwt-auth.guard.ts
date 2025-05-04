@@ -9,7 +9,7 @@ export class JwtAuthGuard implements CanActivate {
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request: Request = context.switchToHttp().getRequest();
         const token = this.extractTokenFromHeader(request);
-
+        console.log("token is here: ", request.cookies);
         if (!token) {
             throw new UnauthorizedException("Missing or invalid token");
         }
@@ -27,9 +27,13 @@ export class JwtAuthGuard implements CanActivate {
 
     private extractTokenFromHeader(request: Request): string | undefined {
         const authHeader = request.headers.authorization;
-        if (!authHeader?.startsWith('Bearer ')) {
-            return undefined;
+        if (authHeader?.startsWith("Bearer ")) {
+            return authHeader.split(" ")[1];
         }
-        return authHeader.split(' ')[1];
+        console.log(request.cookies);
+        if (request.cookies && request.cookies.token) {
+            return request.cookies.token;
+        }
+        return undefined;
     }
 }

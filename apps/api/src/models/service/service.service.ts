@@ -92,4 +92,22 @@ export class ServiceService {
     this.logger.log(`this service ${deletedService} has been deleted!`);
     return {};
   }
+  async getAllServices() {
+    const services = await this.prisma.serviceOffering.findMany({
+      include: {
+        ProviderProfile: {
+          select: {
+            id: true,
+            businessName: true,
+            address: true,
+            contactInfo: true,
+          }
+        }
+      }
+    })
+    this.logger.log("services fetched successfully", services)
+    return {
+      services
+    }
+  }
 }

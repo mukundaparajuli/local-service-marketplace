@@ -7,7 +7,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RoleGuard } from 'src/roles/role.guard';
 import { Roles } from 'src/roles/role.decorator';
 
-@UseGuards(JwtAuthGuard, RoleGuard)
+// @UseGuards(JwtAuthGuard, RoleGuard)
 @Controller('provider')
 export class ProviderController {
   constructor(private readonly providerService: ProviderService) { }
