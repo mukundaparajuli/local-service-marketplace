@@ -1,6 +1,7 @@
 "use client"
 import React, { useState } from 'react';
 import { Search, Menu, X, MapPin, Phone, User, ShoppingCart, ChevronDown, MessageSquare, Bell } from 'lucide-react';
+import { ModeToggle } from './theme-dropdown';
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -10,9 +11,9 @@ const Header = () => {
     };
 
     return (
-        <header className="sticky top-0 z-50 w-full shadow-md bg-white">
+        <header className="sticky top-0 z-50 w-full shadow-md bg-background border-b">
             {/* Top bar with contact info and login */}
-            <div className="bg-gray-50 py-2 px-4 md:px-6 text-sm text-gray-600">
+            <div className="bg-muted/50 py-2 px-4 md:px-6 text-sm text-muted-foreground">
                 <div className="container mx-auto flex flex-wrap justify-between items-center">
                     <div className="flex items-center space-x-4">
                         <span className="flex items-center gap-1">
@@ -26,11 +27,11 @@ const Header = () => {
                     </div>
 
                     <div className="flex items-center space-x-4">
-                        <a href="/login" className="flex items-center gap-1 hover:text-gray-600 transition-colors">
+                        <a href="/login" className="flex items-center gap-1 hover:text-foreground transition-colors">
                             <User size={14} />
                             <span>Login</span>
                         </a>
-                        <a href="/register" className="hidden sm:flex items-center gap-1 hover:text-gray-600 transition-colors">
+                        <a href="/register" className="hidden sm:flex items-center gap-1 hover:text-foreground transition-colors">
                             <User size={14} />
                             <span>Register</span>
                         </a>
@@ -44,9 +45,9 @@ const Header = () => {
                     {/* Logo */}
                     <div className="flex items-center">
                         <a href="/dashboard" className="flex items-center gap-2">
-                            <div className="text-gray-600 font-bold text-2xl">
-                                <span className="bg-gray-600 text-white px-2 py-1 rounded">Local</span>
-                                <span className="text-gray-600">Pro</span>
+                            <div className="font-bold text-2xl">
+                                <span className="bg-primary text-primary-foreground px-2 py-1 rounded">Local</span>
+                                <span className="text-foreground">Pro</span>
                             </div>
                         </a>
                     </div>
@@ -57,39 +58,40 @@ const Header = () => {
                             <input
                                 type="text"
                                 placeholder="Find local services..."
-                                className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                className="w-full pl-10 pr-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring"
                             />
-                            <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
+                            <Search className="absolute left-3 top-2.5 text-muted-foreground" size={18} />
                         </div>
                     </div>
 
                     {/* Desktop navigation */}
                     <nav className="hidden md:flex items-center space-x-6">
-                        <a href="/categories" className="flex items-center gap-1 text-gray-700 hover:text-gray-600 transition-colors">
+                        <a href="/categories" className="flex items-center gap-1 text-foreground hover:text-muted-foreground transition-colors">
                             Categories
                             <ChevronDown size={16} />
                         </a>
-                        <a href="/providers" className="text-gray-700 hover:text-gray-600 transition-colors">Service Providers</a>
-                        <a href="/deals" className="text-gray-700 hover:text-gray-600 transition-colors">Deals</a>
+                        <a href="/providers" className="text-foreground hover:text-muted-foreground transition-colors">Service Providers</a>
+                        <a href="/deals" className="text-foreground hover:text-muted-foreground transition-colors">Deals</a>
                         <div className="flex items-center space-x-3">
-                            <a href="/messages" className="text-gray-700 hover:text-gray-600 transition-colors">
+                            <a href="/messages" className="text-foreground hover:text-muted-foreground transition-colors">
                                 <MessageSquare size={20} />
                             </a>
-                            <a href="/notifications" className="text-gray-700 hover:text-gray-600 transition-colors">
+                            <a href="/notifications" className="text-foreground hover:text-muted-foreground transition-colors">
                                 <Bell size={20} />
                             </a>
-                            <a href="/cart" className="text-gray-700 hover:text-gray-600 transition-colors">
+                            <a href="/cart" className="text-foreground hover:text-muted-foreground transition-colors">
                                 <ShoppingCart size={20} />
                             </a>
                         </div>
-                        <a href="/post-service" className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
+                        <a href="/post-service" className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors">
                             Post a Service
                         </a>
+                        <ModeToggle />
                     </nav>
 
                     {/* Mobile menu button */}
                     <button
-                        className="md:hidden text-gray-700 hover:text-gray-600 transition-colors"
+                        className="md:hidden text-foreground hover:text-muted-foreground transition-colors"
                         onClick={toggleMenu}
                     >
                         {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -102,36 +104,37 @@ const Header = () => {
                         <input
                             type="text"
                             placeholder="Find local services..."
-                            className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                            className="w-full pl-10 pr-4 py-2 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring"
                         />
-                        <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
+                        <Search className="absolute left-3 top-2.5 text-muted-foreground" size={18} />
                     </div>
                 </div>
 
                 {/* Mobile navigation menu */}
                 {isMenuOpen && (
-                    <nav className="md:hidden mt-4 pb-4 border-t border-gray-200 pt-4 space-y-4">
-                        <a href="/categories" className="block text-gray-700 hover:text-gray-600 transition-colors py-2">
+                    <nav className="md:hidden mt-4 pb-4 border-t border-border pt-4 space-y-4">
+                        <a href="/categories" className="block text-foreground hover:text-muted-foreground transition-colors py-2">
                             Categories
                         </a>
-                        <a href="/providers" className="block text-gray-700 hover:text-gray-600 transition-colors py-2">
+                        <a href="/providers" className="block text-foreground hover:text-muted-foreground transition-colors py-2">
                             Service Providers
                         </a>
-                        <a href="/deals" className="block text-gray-700 hover:text-gray-600 transition-colors py-2">
+                        <a href="/deals" className="block text-foreground hover:text-muted-foreground transition-colors py-2">
                             Deals
                         </a>
-                        <a href="/messages" className="block text-gray-700 hover:text-gray-600 transition-colors py-2">
+                        <a href="/messages" className="block text-foreground hover:text-muted-foreground transition-colors py-2">
                             Messages
                         </a>
-                        <a href="/notifications" className="block text-gray-700 hover:text-gray-600 transition-colors py-2">
+                        <a href="/notifications" className="block text-foreground hover:text-muted-foreground transition-colors py-2">
                             Notifications
                         </a>
-                        <a href="/cart" className="block text-gray-700 hover:text-gray-600 transition-colors py-2">
+                        <a href="/cart" className="block text-foreground hover:text-muted-foreground transition-colors py-2">
                             Cart
                         </a>
-                        <a href="/post-service" className="block bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors text-center">
+                        <a href="/post-service" className="block bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors text-center">
                             Post a Service
                         </a>
+                        <ModeToggle />
                     </nav>
                 )}
             </div>

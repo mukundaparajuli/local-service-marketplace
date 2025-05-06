@@ -22,28 +22,28 @@ export default function ServicePage() {
     }, [])
     return (
         <div className="w-full h-full p-20 flex justify-center items-center">
-            {Array.isArray(services) && services.map((service: any) => (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" key={service.id}>
-                    <ServiceCard service={service} key={service.id} />
-                    <ServiceCard service={service} key={service.id} />
-                    <ServiceCard service={service} key={service.id} />
-                    <ServiceCard service={service} key={service.id} />
-                    <ServiceCard service={service} key={service.id} />
-                    <ServiceCard service={service} key={service.id} />
-                    <ServiceCard service={service} key={service.id} />
-                    <ServiceCard service={service} key={service.id} />
-                    <ServiceCard service={service} key={service.id} />
-                    <ServiceCard service={service} key={service.id} />
-                    <ServiceCard service={service} key={service.id} />
-                    <ServiceCard service={service} key={service.id} />
-                    <ServiceCard service={service} key={service.id} />
-                    <ServiceCard service={service} key={service.id} />
-                    <ServiceCard service={service} key={service.id} />
-                    <ServiceCard service={service} key={service.id} />
-                    <ServiceCard service={service} key={service.id} />
+            {Array.isArray(services) && services.map((service: any, index) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" key={index}>
+                    <ServiceCard service={service} />
+                    <ServiceCard service={service} />
+                    <ServiceCard service={service} />
+                    <ServiceCard service={service} />
+                    <ServiceCard service={service} />
+                    <ServiceCard service={service} />
+                    <ServiceCard service={service} />
+                    <ServiceCard service={service} />
+                    <ServiceCard service={service} />
+                    <ServiceCard service={service} />
+                    <ServiceCard service={service} />
+                    <ServiceCard service={service} />
+                    <ServiceCard service={service} />
+                    <ServiceCard service={service} />
+                    <ServiceCard service={service} />
+                    <ServiceCard service={service} />
+                    <ServiceCard service={service} />
                 </div>
             ))
             }
-        </div>
+        </div >
     )
 }
