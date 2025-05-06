@@ -34,7 +34,7 @@ export default function ServiceCard({ service }: { service: Service }) {
     }
 
     return (
-        <Link href={"/dashboard/service/" + service.id} className="flex flex-col items-center aspect-square">
+        <Link href={"/dashboard/service/" + service.id} className="flex flex-col items-center w-full">
             <Card className="w-full max-w-sm overflow-hidden transition hover:shadow-lg p-0">
                 {service.imageUrl ? (
                     <div className="relative h-48 w-full overflow-hidden">
