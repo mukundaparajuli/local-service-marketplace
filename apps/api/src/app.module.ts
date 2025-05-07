@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -11,6 +11,7 @@ import { BookingModule } from './models/booking/booking.module';
 import { MessagesModule } from './models/messages/messages.module';
 import { PaymentModule } from './models/payment/payment.module';
 import { ReviewModule } from './models/review/review.module';
+import cookieParser from 'cookie-parser';
 
 @Module({
   imports: [
@@ -28,4 +29,8 @@ import { ReviewModule } from './models/review/review.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(cookieParser()).forRoutes('*');
+  }
+}

@@ -1,3 +1,5 @@
+"use client"
+
 import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
 
 import {
@@ -9,6 +11,8 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    SidebarTrigger,
+    useSidebar,
 } from "@/components/ui/sidebar"
 
 // Menu items.
@@ -41,11 +45,11 @@ const items = [
 ]
 
 export function AppSidebar() {
+    const { state } = useSidebar();
     return (
         <Sidebar className="mt-28">
             <SidebarContent>
                 <SidebarGroup>
-                    <SidebarGroupLabel>Application</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {items.map((item) => (

@@ -1,16 +1,17 @@
+
 import { NextRequest, NextResponse } from "next/server";
+import { useAuth } from "../contexts/auth-context";
 
 export default function middleware(request: NextRequest) {
-    console.log("middleware trigerred")
-    const token = request.cookies.get("token")?.value;
-    console.log(token);
-    const allCookies = request.cookies.getAll()
-    console.log(allCookies)
+    if (request.nextUrl.pathname === "/") {
+        return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
+
     const isProtected = request.nextUrl.pathname.startsWith("/dashboard");
 
-    if (isProtected && !token) {
-        return NextResponse.redirect(new URL("/login", request.url));
-    }
+    // if (isProtected && !user) {
+    //     return NextResponse.redirect(new URL("/login", request.url));
+    // }
 
     return NextResponse.next();
 }

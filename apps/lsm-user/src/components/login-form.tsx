@@ -14,7 +14,8 @@ import { Label } from "@/components/ui/label"
 import React, { FormEvent, useState } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "react-toastify"
-import { login } from "../../actions/login"
+import { useAuth } from "../../contexts/auth-context"
+
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
   const [identifier, setidentifier] = useState("")
@@ -22,6 +23,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
   const [loading, setLoading] = useState(false)
 
   const router = useRouter()
+  const { login } = useAuth()
 
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault()
@@ -34,14 +36,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
     }
 
     try {
-      const result = await login({ identifier, password })
-
-      if (result?.error) {
-        toast.error(result.error)
-      } else {
-        toast.success("Logged in successfully!")
-        router.push("/dashboard")
-      }
+      await login({ identifier, password })
+      toast.success("Logged in successfully!")
+      router.push("/dashboard")
     } catch (error: any) {
       console.error(error)
       toast.error(error?.message || "Something went wrong. Please try again.")

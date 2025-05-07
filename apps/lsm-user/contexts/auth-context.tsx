@@ -1,9 +1,9 @@
+"use client";
+
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { getMyProfile } from '../actions/get-myprofile';
 import { login } from '../actions/login';
 import { logout } from '../actions/logout';
-
-import { User } from 'lucide-react';
 
 interface User {
     id: string;
@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const loginUser = async (credentials: { identifier: string; password: string }) => {
         try {
-            const user = await login(credentials)
+            const user = await login(credentials);
             setUser(user);
         } catch (error) {
             console.error('Login error:', error);
@@ -60,14 +60,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    const value = {
+    const value: AuthContextType = {
         user,
-        login,
-        logout,
+        login: loginUser,
+        logout: logoutUser,
     };
 
+
     if (loading) {
-        return <div>Loading...</div>; // Replace with your loading component
+        return <div>Loading...</div>;
     }
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

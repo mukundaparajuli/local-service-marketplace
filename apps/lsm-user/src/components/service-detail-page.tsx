@@ -28,7 +28,7 @@ interface ServiceDetailProps {
 
 const ServiceDetail: React.FC<ServiceDetailProps> = ({ service }) => {
     return (
-        <div className="w-full mx-auto bg-background text-foreground shadow-lg rounded-xl overflow-hidden">
+        <div className="w-4/5 mx-auto bg-background text-foreground shadow-lg rounded-xl overflow-hidden">
             {/* Hero Section */}
             <div className="relative">
                 {service.imageUrl ? (

@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt'
 import { RegisterDto } from './dto/register.dto';
@@ -6,14 +6,17 @@ import { User } from '@marketplace/types';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
 import { UserRole } from '@marketplace/types';
-import { Response } from 'express';
+import { Request, Response } from 'express';
+import { UserService } from 'src/models/user/user.service';
 
 
 @Injectable()
 export class AuthService {
+    private readonly logger = new Logger(AuthService.name)
     constructor(
         private prisma: PrismaService,
         private jwtService: JwtService,
+        private userService: UserService,
     ) { }
 
     async register(data: RegisterDto): Promise<User> {
@@ -91,5 +94,29 @@ export class AuthService {
                 token,
             }
         };
+    }
+
+
+    async getMe(req: Request): Promise<any> {
+        const token = req.cookies?.token;
+        if (!token) {
+            throw new UnauthorizedException('Missing or invalid token');
+        }
+
+        const decodedToken = this.jwtService.verify(token as string);
+        this.logger.log('Decoded token:', decodedToken);
+        const user = await this.userService.findOne(decodedToken.sub);
+        this.logger.log('User:', user);
+
+        if (!user) {
+            throw new UnauthorizedException('User not found');
+        }
+
+        return user;
+    }
+
+    async logout(req: Request, res: Response): Promise<any> {
+        res.clearCookie('token');
+        return { message: 'Logged out successfully' };
     }
 }

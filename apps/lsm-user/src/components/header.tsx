@@ -1,14 +1,18 @@
 "use client"
 import React, { useState } from 'react';
-import { Search, Menu, X, MapPin, Phone, User, ShoppingCart, ChevronDown, MessageSquare, Bell } from 'lucide-react';
+import { Search, Menu, X, MapPin, Phone, User, ShoppingCart, ChevronDown, MessageSquare, Bell, LogOut } from 'lucide-react';
 import { ModeToggle } from './theme-dropdown';
+import { useAuth } from '../../contexts/auth-context';
+import { Button } from './ui/button';
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+    const { user, logout } = useAuth();
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
     };
+
 
     return (
         <header className="sticky top-0 z-50 w-full shadow-md bg-background border-b">
@@ -27,14 +31,26 @@ const Header = () => {
                     </div>
 
                     <div className="flex items-center space-x-4">
-                        <a href="/login" className="flex items-center gap-1 hover:text-foreground transition-colors">
-                            <User size={14} />
-                            <span>Login</span>
-                        </a>
-                        <a href="/register" className="hidden sm:flex items-center gap-1 hover:text-foreground transition-colors">
-                            <User size={14} />
-                            <span>Register</span>
-                        </a>
+                        {!user ?
+                            <div className='flex items-center space-x-4'>
+                                <a href="/login" className="flex items-center gap-1 hover:text-foreground transition-colors">
+                                    <User size={14} />
+                                    <span>Login</span>
+                                </a>
+                                <a href="/register" className="hidden sm:flex items-center gap-1 hover:text-foreground transition-colors">
+                                    <User size={14} />
+                                    <span>Register</span>
+                                </a>
+                            </div> :
+                            <div>
+                                <div className="flex items-center gap-1 hover:text-foreground transition-colors"
+                                    onClick={logout}
+                                >
+                                    <LogOut size={14} />
+                                    <span>Logout</span>
+                                </div>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
