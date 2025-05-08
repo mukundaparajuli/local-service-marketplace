@@ -44,14 +44,12 @@ export function MyBookings() {
 
 
     return (
-        <div>
-            <div>
-                {
-                    bookings.map((booking: Booking) => (
-                        <BookingInfoCard {...booking} key={booking.id} />
-                    ))
-                }
-            </div>
+        <div className="w-full h-full flex justify-center items-start mt-0">
+            {
+                bookings.map((booking: Booking) => (
+                    <BookingInfoCard booking={booking} key={booking.id} />
+                ))
+            }
         </div>
     )
 }

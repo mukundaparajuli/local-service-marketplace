@@ -1,5 +1,13 @@
-import { useState } from 'react';
-import { Calendar, Clock, MapPin, DollarSign, FileText, AlertCircle } from 'lucide-react';
+// src/components/BookingCard.tsx
+import { useState, useEffect, useRef } from 'react';
+import { DollarSign, Calendar, Clock, MapPin, MessageSquare, ArrowLeft, Send, Info } from 'lucide-react';
+import { format } from 'date-fns';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Button } from './ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { Badge } from './ui/badge';
+import { Input } from './ui/input';
+import { ScrollArea } from './ui/scroll-area';
 
 interface Booking {
     id: number;
@@ -17,152 +25,260 @@ interface Booking {
     serviceId: number;
 }
 
-export default function BookingCard(booking: Booking) {
-    const [isExpanded, setIsExpanded] = useState(false);
+interface Message {
+    id: number;
+    sender: 'user' | 'provider';
+    content: string;
+    timestamp: string;
+}
 
-    // Format date and time
-    const formatDate = (dateString: string | number | Date) => {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-    };
+interface BookingCardProps {
+    booking: Booking;
+}
 
-    const formatTime = (dateString: string | number | Date) => {
-        const date = new Date(dateString);
-        return date.toLocaleTimeString('en-US', {
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    };
+export default function BookingCard({ booking }: BookingCardProps) {
+    const [activeView, setActiveView] = useState<'details' | 'chat'>('details');
+    const [messageInput, setMessageInput] = useState('');
+    const [messages, setMessages] = useState<Message[]>([]);
+    const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    // Get time range
-    const startTime = formatTime(booking.scheduledDate);
-    const endTime = formatTime(booking.scheduledEndTime);
+    // Simulate fetching messages (replace with API call in production)
+    useEffect(() => {
+        const fetchMessages = async () => {
+            const sampleMessages: Message[] = [
+                {
+                    id: 1,
+                    sender: 'provider',
+                    content: `Hello! I'm looking forward to our appointment in ${booking.location}.`,
+                    timestamp: '2025-04-13T18:15:00.000Z',
+                },
+                {
+                    id: 2,
+                    sender: 'user',
+                    content: 'Hi there! I’m excited too. Do I need to bring anything specific?',
+                    timestamp: '2025-04-13T18:20:00.000Z',
+                },
+                {
+                    id: 3,
+                    sender: 'provider',
+                    content: 'Just yourself and comfortable clothes. Everything else will be provided.',
+                    timestamp: '2025-04-13T18:25:00.000Z',
+                },
+                {
+                    id: 4,
+                    sender: 'user',
+                    content: 'Great, thanks! What time should I arrive?',
+                    timestamp: '2025-04-13T18:30:00.000Z',
+                },
+                {
+                    id: 5,
+                    sender: 'provider',
+                    content: 'Please arrive by 3:30 PM so we can start on time.',
+                    timestamp: '2025-04-13T18:35:00.000Z',
+                },
+                {
+                    id: 6,
+                    sender: 'user',
+                    content: 'Got it! See you then.',
+                    timestamp: '2025-04-13T18:40:00.000Z',
+                },
+            ];
+            setMessages(sampleMessages);
+        };
+        fetchMessages();
+    }, [booking.location]);
 
-    // Status badge color
-    const getStatusColor = (status: any) => {
-        switch (status) {
-            case 'PENDING':
-                return 'bg-yellow-100 text-yellow-800';
-            case 'CONFIRMED':
-                return 'bg-green-100 text-green-800';
-            case 'CANCELLED':
-                return 'bg-red-100 text-red-800';
-            default:
-                return 'bg-gray-100 text-gray-800';
+    // Auto-scroll to bottom when messages change or view switches to chat
+    useEffect(() => {
+        if (activeView === 'chat') {
+            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
         }
+    }, [messages, activeView]);
+
+    const formatDate = (dateString: string) => {
+        return format(new Date(dateString), 'MMMM do, yyyy');
+    };
+
+    const formatTime = (dateString: string) => {
+        return format(new Date(dateString), 'h:mm a');
+    };
+
+    const formatMessageTime = (dateString: string) => {
+        return format(new Date(dateString), 'h:mm a');
+    };
+
+    const handleSendMessage = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (messageInput.trim() === '') return;
+
+        const newMessage: Message = {
+            id: messages.length + 1,
+            sender: 'user',
+            content: messageInput,
+            timestamp: new Date().toISOString(),
+        };
+
+        setMessages([...messages, newMessage]);
+        setMessageInput('');
+        // TODO: Send message to backend API
     };
 
     return (
-        <div className="w-2/5">
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
-                {/* Header */}
-                <div className="p-4 bg-gray-500 text-white flex justify-between items-center">
-                    <div>
-                        <h3 className="text-lg font-semibold">Booking #{booking.id}</h3>
-                        <div className="text-sm opacity-90">Created on {new Date(booking.createdAt).toLocaleDateString()}</div>
-                    </div>
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(booking.status)}`}>
-                        {booking.status}
-                    </span>
-                </div>
+        <Card className="w-4/5 max-h-[100vh] flex flex-col">
+            {/* Tabbed Navigation */}
+            <Tabs value={activeView} onValueChange={(value) => setActiveView(value as 'details' | 'chat')}>
+                <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="details" className="flex items-center gap-2">
+                        <Info className="h-4 w-4" />
+                        Booking Details
+                    </TabsTrigger>
+                    <TabsTrigger value="chat" className="flex items-center gap-2">
+                        <MessageSquare className="h-4 w-4" />
+                        Chat
+                        <Badge variant="secondary" className="ml-2 bg-gray-800 text-white">
+                            {booking.chatStatus}
+                        </Badge>
+                    </TabsTrigger>
+                </TabsList>
 
-                {/* Main Content */}
-                <div className="p-4">
-                    <div className="space-y-4">
-                        {/* Date and Time */}
-                        <div className="flex items-start">
-                            <Calendar className="w-5 h-5 mr-3 text-gray-500 flex-shrink-0 mt-0.5" />
+                {/* Booking Details View */}
+                <TabsContent value="details">
+                    <CardHeader>
+                        <div className="flex justify-between items-start">
                             <div>
-                                <p className="font-medium">Date</p>
-                                <p className="text-gray-600">{formatDate(booking.scheduledDate)}</p>
+                                <CardTitle>Booking #{booking.id}</CardTitle>
+                                <p className="text-sm text-muted-foreground">
+                                    Created: {formatDate(booking.createdAt)}
+                                </p>
                             </div>
+                            <Badge
+                                variant="secondary"
+                                className="bg-yellow-100 text-yellow-800 uppercase"
+                            >
+                                {booking.status}
+                            </Badge>
                         </div>
-
-                        {/* Time */}
-                        <div className="flex items-start">
-                            <Clock className="w-5 h-5 mr-3 text-gray-500 flex-shrink-0 mt-0.5" />
-                            <div>
-                                <p className="font-medium">Time</p>
-                                <p className="text-gray-600">{startTime} - {endTime}</p>
-                            </div>
-                        </div>
-
-                        {/* Location */}
-                        <div className="flex items-start">
-                            <MapPin className="w-5 h-5 mr-3 text-gray-500 flex-shrink-0 mt-0.5" />
-                            <div>
-                                <p className="font-medium">Location</p>
-                                <p className="text-gray-600">{booking.location}</p>
-                            </div>
-                        </div>
-
-                        {/* Price */}
-                        <div className="flex items-start">
-                            <DollarSign className="w-5 h-5 mr-3 text-gray-500 flex-shrink-0 mt-0.5" />
-                            <div>
-                                <p className="font-medium">Total Cost</p>
-                                <p className="text-gray-600">${booking.totalCost}</p>
-                            </div>
-                        </div>
-
-                        {/* Additional details when expanded */}
-                        {isExpanded && (
-                            <>
-                                {/* Service ID */}
-                                <div className="flex items-start">
-                                    <FileText className="w-5 h-5 mr-3 text-gray-500 flex-shrink-0 mt-0.5" />
-                                    <div>
-                                        <p className="font-medium">Service ID</p>
-                                        <p className="text-gray-600">{booking.serviceId}</p>
-                                    </div>
+                    </CardHeader>
+                    <CardContent className="overflow-y-auto">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {/* Total Cost */}
+                            <div className="flex items-center">
+                                <DollarSign className="h-5 w-5 text-muted-foreground mr-3" />
+                                <div>
+                                    <span className="text-muted-foreground">Total Cost: </span>
+                                    <span className="font-semibold">${booking.totalCost}</span>
                                 </div>
+                            </div>
 
-                                {/* Chat Status */}
-                                <div className="flex items-start">
-                                    <AlertCircle className="w-5 h-5 mr-3 text-gray-500 flex-shrink-0 mt-0.5" />
-                                    <div>
-                                        <p className="font-medium">Chat Status</p>
-                                        <p className="text-gray-600">{booking.chatStatus}</p>
-                                    </div>
+                            {/* Date */}
+                            <div className="flex items-center">
+                                <Calendar className="h-5 w-5 text-muted-foreground mr-3" />
+                                <div>
+                                    <span className="text-muted-foreground">Date: </span>
+                                    <span className="font-semibold">{formatDate(booking.scheduledDate)}</span>
                                 </div>
+                            </div>
 
-                                {/* Notes */}
-                                <div className="flex items-start">
-                                    <FileText className="w-5 h-5 mr-3 text-gray-500 flex-shrink-0 mt-0.5" />
-                                    <div>
-                                        <p className="font-medium">Notes</p>
-                                        <p className="text-gray-600 italic">{booking.notes || "No notes available"}</p>
-                                    </div>
+                            {/* Time */}
+                            <div className="flex items-center">
+                                <Clock className="h-5 w-5 text-muted-foreground mr-3" />
+                                <div>
+                                    <span className="text-muted-foreground">Time: </span>
+                                    <span className="font-semibold">
+                                        {formatTime(booking.scheduledDate)} - {formatTime(booking.scheduledEndTime)}
+                                    </span>
                                 </div>
-                            </>
-                        )}
-                    </div>
-                </div>
+                            </div>
 
-                {/* Footer with actions */}
-                <div className="p-4 bg-gray-50 border-t border-gray-200 flex justify-between">
-                    <button
-                        onClick={() => setIsExpanded(!isExpanded)}
-                        className="text-gray-500 hover:text-gray-700 text-sm font-medium"
-                    >
-                        {isExpanded ? "Show Less" : "Show More Details"}
-                    </button>
+                            {/* Location */}
+                            <div className="flex items-center">
+                                <MapPin className="h-5 w-5 text-muted-foreground mr-3" />
+                                <div>
+                                    <span className="text-muted-foreground">Location: </span>
+                                    <span className="font-semibold">{booking.location}</span>
+                                </div>
+                            </div>
+                        </div>
 
-                    <div className="space-x-2">
-                        <button className="px-4 py-2 bg-gray-500 text-white text-sm font-medium rounded hover:bg-gray-600 transition-colors">
-                            Modify
-                        </button>
-                        <button className="px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded hover:bg-gray-50 transition-colors">
-                            Cancel
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+                        <div className="mt-6 flex space-x-3">
+                            <Button className="flex-1 bg-gray-500 hover:bg-gray-600">
+                                Modify Booking
+                            </Button>
+                            <Button
+                                variant="outline"
+                                className="flex-1"
+                                onClick={() => setActiveView('chat')}
+                            >
+                                <MessageSquare className="h-4 w-4 mr-2" />
+                                Chat Now
+                            </Button>
+                        </div>
+                    </CardContent>
+                </TabsContent>
+
+                {/* Chat View */}
+                <TabsContent value="chat" className="flex flex-col ">
+                    {/* Chat Header */}
+                    <CardHeader className="">
+                        <div className="flex items-center">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setActiveView('details')}
+                                className="mr-2"
+                            >
+                                <ArrowLeft className="h-5 w-5" />
+                            </Button>
+                            <div>
+                                <p className="font-medium text-sm">Mukunda Parajuli</p>
+                                <p className="text-xs text-muted-foreground">
+                                    Booking #{booking.id} • {booking.status}
+                                </p>
+                            </div>
+                        </div>
+                    </CardHeader>
+
+                    {/* Messages */}
+                    <ScrollArea className="flex-1 max-h-[60vh] p-4 overflow-y-scroll">
+                        {messages.map((message) => (
+                            <div
+                                key={message.id}
+                                className={`mb-3 flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                            >
+                                <div
+                                    className={`p-3 rounded-lg max-w-xs ${message.sender === 'user'
+                                        ? 'bg-gray-500 text-white rounded-br-none'
+                                        : 'bg-muted text-foreground rounded-bl-none'
+                                        }`}
+                                >
+                                    <p className="text-sm">{message.content}</p>
+                                    <p className="text-xs mt-1 opacity-70 text-right">
+                                        {formatMessageTime(message.timestamp)}
+                                    </p>
+                                </div>
+                            </div>
+                        ))}
+                        <div ref={messagesEndRef} />
+                    </ScrollArea>
+
+                    {/* Message Input */}
+                    <form onSubmit={handleSendMessage} className="p-3 border-t flex">
+                        <Input
+                            type="text"
+                            value={messageInput}
+                            onChange={(e) => setMessageInput(e.target.value)}
+                            placeholder="Type a message..."
+                            className="flex-1 rounded-r-none"
+                        />
+                        <Button
+                            type="submit"
+                            className="bg-gray-500 hover:bg-gray-600 rounded-l-none"
+                        >
+                            <Send className="h-5 w-5" />
+                        </Button>
+                    </form>
+                </TabsContent>
+            </Tabs>
+        </Card>
     );
 }
