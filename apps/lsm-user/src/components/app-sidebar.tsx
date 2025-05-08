@@ -28,8 +28,8 @@ const items = [
         icon: Inbox,
     },
     {
-        title: "My Bookings",
-        url: "#",
+        title: "My Booking",
+        url: "/booking",
         icon: Calendar,
     },
     {

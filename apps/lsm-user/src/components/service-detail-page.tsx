@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { RequestBookingDialog } from "./dialog-box";
 
 type Service = {
     id: number;
@@ -127,8 +128,10 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service }) => {
                     </CardContent>
                 </Card>
 
-                {/* Book Button */}
-                <Button className="w-full mt-4">Book This Service</Button>
+                {/* Request Booking Button */}
+                <div className="w-full">
+                    <RequestBookingDialog />
+                </div>
             </div>
         </div>
     );

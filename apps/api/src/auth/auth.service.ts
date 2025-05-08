@@ -77,7 +77,7 @@ export class AuthService {
         const token = this.jwtService.sign(payload);
 
         res.cookie('token', token, {
-            httpOnly: true,
+            httpOnly: false,
             secure: false,
             sameSite: "lax",
             maxAge: 60 * 60 * 24 * 7,

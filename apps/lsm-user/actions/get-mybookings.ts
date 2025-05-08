@@ -1,5 +1,5 @@
-export const getMyProfile = async () => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/me`, {
+export const getMyBookings = async () => {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/booking/me`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

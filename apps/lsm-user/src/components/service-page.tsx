@@ -1,5 +1,5 @@
 "use client"
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { getAllServices } from "../../actions/get-services"
 import { useEffect, useState } from "react";
 import ServiceCard from "./service-card";

@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label"
 import React, { FormEvent, useState } from "react"
 import { signIn } from "next-auth/react"
 import { register } from "../../actions/register"
-import { toast } from "react-toastify"
+import { toast } from "sonner"
 
 export function RegisterForm({
     className,

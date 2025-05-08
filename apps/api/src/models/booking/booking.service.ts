@@ -1,7 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { RequestBookingDto } from './dto/request-booking.dto';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { BookingStatus, ChatStatus } from '@prisma/client';
+import { Request } from 'express';
 
 @Injectable()
 export class BookingService {
@@ -20,7 +21,24 @@ export class BookingService {
 
       }
     });
-    this.logger.debug(`Here is the newly made booking: `, { booking })
+    return booking;
+  }
+
+
+  async getMyBooking(req: Request) {
+    const user = req.user;
+    console.log(user)
+
+    if (!user) {
+      throw new UnauthorizedException("Unauthorized: token not found");
+    }
+    const userId = user['id'];
+    const bookings = await this.prisma.booking.findMany({
+      where: {
+        userId: userId,
+      }
+    })
+    return { bookings };
   }
 
   // enable chat for booking
