@@ -15,7 +15,7 @@ const Header = () => {
 
 
     return (
-        <header className="sticky top-0 z-50 w-full shadow-md bg-background border-b max-h-28">
+        <header className="sticky top-0 z-50 w-full shadow-md bg-background border-b ">
             {/* Top bar with contact info and login */}
             <div className="bg-muted/50 py-2 px-4 md:px-6 text-sm text-muted-foreground">
                 <div className="container mx-auto flex flex-wrap justify-between items-center">

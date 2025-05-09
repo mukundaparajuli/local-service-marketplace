@@ -5,7 +5,6 @@ interface loginDataType {
 
 export const login = async (loginData: loginDataType) => {
     try {
-        console.log(loginData);
         const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`, {
             method: 'POST',
             body: JSON.stringify(loginData),
@@ -15,17 +14,20 @@ export const login = async (loginData: loginDataType) => {
             credentials: "include"
         });
 
+        const data = await response.json();
+
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData?.message || 'An error occurred while logging in.');
+            throw new Error(data?.message || 'An error occurred while logging in.');
         }
 
-        const data = await response.json();
-        console.log(data);
-        return data;
+        if (!data || !data.user) {
+            throw new Error('Invalid response from server');
+        }
+
+        document.cookie = `auth-state=true; path=/; max-age=${60 * 60 * 24 * 7}`;
+        return data.user;
     } catch (err: any) {
         console.error('Login error:', err);
-        const errorMessage = err.message || 'Something went wrong. Please try again later.';
-        return { error: true, message: errorMessage };
+        throw new Error(err.message || 'Something went wrong. Please try again later.');
     }
 };

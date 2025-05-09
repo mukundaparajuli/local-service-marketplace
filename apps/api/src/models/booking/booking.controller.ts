@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Put } from '@nestjs/common';
 import { BookingService } from './booking.service';
 import { RequestBookingDto } from './dto/request-booking.dto';
 import { UserRole } from '@marketplace/types';
 import { Roles } from 'src/roles/role.decorator';
 import type { Request } from 'express';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { UpdateBookingDto } from './dto/update-booking.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('booking')
@@ -12,8 +13,8 @@ export class BookingController {
   constructor(private readonly bookingService: BookingService) { }
 
   @Post()
-  requestBooking(@Body() requestBookingDto: RequestBookingDto) {
-    return this.bookingService.requestBooking(requestBookingDto);
+  requestBooking(@Req() req: Request, @Body() requestBookingDto: RequestBookingDto) {
+    return this.bookingService.requestBooking(req, requestBookingDto);
   }
 
   @Get('me')
@@ -25,5 +26,10 @@ export class BookingController {
   @Roles(UserRole.ADMIN)
   enableChat(@Param('id') id: string) {
     return this.bookingService.enableChat(+id);
+  }
+
+  @Put(':bookingId')
+  updateBooking(@Req() req: Request, @Param('bookingId') bookingId: string, @Body() updateBookingDto: UpdateBookingDto) {
+    return this.bookingService.updateBooking(req, updateBookingDto);
   }
 }

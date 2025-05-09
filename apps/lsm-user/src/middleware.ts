@@ -1,6 +1,4 @@
-
 import { NextRequest, NextResponse } from "next/server";
-import { useAuth } from "../contexts/auth-context";
 
 export default function middleware(request: NextRequest) {
     if (request.nextUrl.pathname === "/") {
@@ -8,16 +6,15 @@ export default function middleware(request: NextRequest) {
     }
 
     const isProtected = request.nextUrl.pathname.startsWith("/dashboard");
+    const authState = request.cookies.get("auth-state");
 
-    // if (isProtected && !user) {
-    //     return NextResponse.redirect(new URL("/login", request.url));
-    // }
+    if (isProtected && !authState) {
+        return NextResponse.redirect(new URL("/login", request.url));
+    }
 
     return NextResponse.next();
 }
+
 export const config = {
-    matcher: [
-        "/dashboard/:path*",
-        "/dashboard"
-    ]
+    matcher: ['/', '/dashboard/:path*']
 }

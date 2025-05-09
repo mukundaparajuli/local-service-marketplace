@@ -1,6 +1,5 @@
-// src/components/BookingCard.tsx
 import { useState, useEffect, useRef } from 'react';
-import { DollarSign, Calendar, Clock, MapPin, MessageSquare, ArrowLeft, Send, Info } from 'lucide-react';
+import { DollarSign, Calendar, Clock, MapPin, MessageSquare, ArrowLeft, Send, Info, Pencil } from 'lucide-react';
 import { format } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
@@ -8,6 +7,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Badge } from './ui/badge';
 import { Input } from './ui/input';
 import { ScrollArea } from './ui/scroll-area';
+import { UpdateBookingDialog } from './update-booking-dialog';
+import { formatDateForInput } from '@/utils/format-date-for-input';
 
 interface Booking {
     id: number;
@@ -32,6 +33,19 @@ interface Message {
     timestamp: string;
 }
 
+const transformBookingForUpdate = (booking: Booking) => {
+    const transformed = {
+        id: booking.id,
+        scheduledDate: formatDateForInput(new Date(booking.scheduledDate)),
+        scheduledEndTime: formatDateForInput(new Date(booking.scheduledEndTime)),
+        location: booking.location,
+        notes: booking.notes || '',
+        totalCost: parseFloat(booking.totalCost)
+    };
+    console.log('Transformed booking:', transformed);
+    return transformed;
+};
+
 interface BookingCardProps {
     booking: Booking;
 }
@@ -41,6 +55,7 @@ export default function BookingCard({ booking }: BookingCardProps) {
     const [messageInput, setMessageInput] = useState('');
     const [messages, setMessages] = useState<Message[]>([]);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const [open, setOpen] = useState<boolean>(false);
 
     // Simulate fetching messages (replace with API call in production)
     useEffect(() => {
@@ -55,7 +70,7 @@ export default function BookingCard({ booking }: BookingCardProps) {
                 {
                     id: 2,
                     sender: 'user',
-                    content: 'Hi there! I’m excited too. Do I need to bring anything specific?',
+                    content: "Hi there! I'm excited too. Do I need to bring anything specific?",
                     timestamp: '2025-04-13T18:20:00.000Z',
                 },
                 {
@@ -124,7 +139,7 @@ export default function BookingCard({ booking }: BookingCardProps) {
     };
 
     return (
-        <Card className="w-4/5 max-h-[100vh] flex flex-col">
+        <Card className="w-4/5 flex flex-col">
             {/* Tabbed Navigation */}
             <Tabs value={activeView} onValueChange={(value) => setActiveView(value as 'details' | 'chat')}>
                 <TabsList className="grid w-full grid-cols-2">
@@ -201,8 +216,12 @@ export default function BookingCard({ booking }: BookingCardProps) {
                         </div>
 
                         <div className="mt-6 flex space-x-3">
-                            <Button className="flex-1 bg-gray-500 hover:bg-gray-600">
-                                Modify Booking
+                            <Button
+                                variant="outline"
+                                className="flex-1"
+                            >
+                                <Pencil className="h-4 w-4 mr-2" />
+                                <UpdateBookingDialog previousBooking={transformBookingForUpdate(booking)} open={open} setOpen={setOpen} />
                             </Button>
                             <Button
                                 variant="outline"

@@ -29,6 +29,8 @@ export function MyBookings() {
         getMyBooking();
     }, [])
 
+
+
     const getMyBooking = async () => {
         try {
             const bookings = await getMyBookings();
@@ -40,11 +42,8 @@ export function MyBookings() {
             setLoading(false)
         }
     }
-
-
-
     return (
-        <div className="w-full h-full flex justify-center items-start mt-0">
+        <div className="w-full h-full flex flex-col gap-4 justify-center items-center m-8">
             {
                 bookings.map((booking: Booking) => (
                     <BookingInfoCard booking={booking} key={booking.id} />

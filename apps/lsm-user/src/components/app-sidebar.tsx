@@ -29,7 +29,7 @@ const items = [
     },
     {
         title: "My Booking",
-        url: "/booking",
+        url: "/dashboard/booking",
         icon: Calendar,
     },
     {

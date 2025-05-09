@@ -1,29 +1,35 @@
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { FormEvent, useState } from "react";
-import { requestBooking } from "../../actions/request-booking";
-import { toast } from "sonner";
 import { DialogBoxTemplate } from "./dialog-box-template";
+import { Label } from "./ui/label";
+import { Input } from "./ui/input";
+import { toast } from "sonner";
+import { updateBooking } from "../../actions/update-booking";
+import { Textarea } from "./ui/textarea";
 
-export function RequestBookingDialog({ open, setOpen }: { open: boolean, setOpen: (open: boolean) => void }) {
+type Booking = {
+    id: number;
+    scheduledDate: string;
+    scheduledEndTime: string;
+    location: string;
+    notes: string;
+    totalCost: number;
+}
+
+export function UpdateBookingDialog({ previousBooking, open, setOpen }: { previousBooking: Booking, open: boolean, setOpen: (open: boolean) => void }) {
     const [loading, setLoading] = useState<boolean>(false);
-    const [formData, setFormData] = useState({
-        scheduledDate: "",
-        scheduledEndTime: "",
-        location: "",
-        notes: "",
-        totalCost: 0,
+    const [formData, setFormData] = useState<Booking>({
+        ...previousBooking,
     });
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        console.log('Input changed:', event.target.id, event.target.value);
         setFormData({
             ...formData,
             [event.target.id]: event.target.value,
         });
     };
 
-    const handleBooking = async (e: FormEvent) => {
+    const handleBookingUpdate = async (e: FormEvent) => {
         e.preventDefault()
         setLoading(true)
 
@@ -34,14 +40,15 @@ export function RequestBookingDialog({ open, setOpen }: { open: boolean, setOpen
         }
         try {
             const bookingInfo = {
+                id: formData.id,
                 scheduledDate: new Date(formData.scheduledDate),
                 scheduledEndTime: new Date(formData.scheduledEndTime),
                 location: formData.location,
                 notes: formData.notes,
                 totalCost: formData.totalCost,
             };
-            await requestBooking(bookingInfo);
-            toast.success("Booking request registered successfully!");
+            await updateBooking(bookingInfo);
+            toast.success("Booking updated successfully!");
             setOpen(false);
         } catch (error: any) {
             console.error(error);
@@ -53,14 +60,14 @@ export function RequestBookingDialog({ open, setOpen }: { open: boolean, setOpen
         console.log("Booking request sent:", formData);
     };
 
-    return (
 
+    return (
         <DialogBoxTemplate
             open={open}
             setOpen={setOpen}
-            title="Request a Booking"
-            description="Fill in the details to request a booking. Click save when you're done."
-            onSubmit={handleBooking}
+            title="Update Booking"
+            description="Fill in the details to update a booking. Click save when you're done."
+            onSubmit={handleBookingUpdate}
             submitButtonText="Save Booking"
         >
             <div className="grid gap-4 py-4">
@@ -125,5 +132,5 @@ export function RequestBookingDialog({ open, setOpen }: { open: boolean, setOpen
                 </div>
             </div>
         </DialogBoxTemplate>
-    );
+    )
 }

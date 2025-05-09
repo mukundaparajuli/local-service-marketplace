@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { RequestBookingDialog } from "./dialog-box";
+import { useState } from "react";
 
 type Service = {
     id: number;
@@ -28,6 +29,7 @@ interface ServiceDetailProps {
 }
 
 const ServiceDetail: React.FC<ServiceDetailProps> = ({ service }) => {
+    const [open, setOpen] = useState(false);
     return (
         <div className="w-4/5 mx-auto bg-background text-foreground shadow-lg rounded-xl overflow-hidden">
             {/* Hero Section */}
@@ -127,11 +129,9 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service }) => {
                         </div>
                     </CardContent>
                 </Card>
-
-                {/* Request Booking Button */}
-                <div className="w-full">
-                    <RequestBookingDialog />
-                </div>
+                <Button variant="outline" className="w-full">
+                    <RequestBookingDialog open={open} setOpen={setOpen} />
+                </Button>
             </div>
         </div>
     );
