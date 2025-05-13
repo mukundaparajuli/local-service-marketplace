@@ -15,14 +15,13 @@ type Booking = {
     totalCost: number;
 }
 
-export function UpdateBookingDialog({ previousBooking, open, setOpen }: { previousBooking: Booking, open: boolean, setOpen: (open: boolean) => void }) {
+export function UpdateBookingDialog({ previousBooking, open, setOpen, setUpdatedBooking }: { previousBooking: Booking, open: boolean, setOpen: (open: boolean) => void, setUpdatedBooking: any }) {
     const [loading, setLoading] = useState<boolean>(false);
     const [formData, setFormData] = useState<Booking>({
         ...previousBooking,
     });
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        console.log('Input changed:', event.target.id, event.target.value);
         setFormData({
             ...formData,
             [event.target.id]: event.target.value,
@@ -47,7 +46,8 @@ export function UpdateBookingDialog({ previousBooking, open, setOpen }: { previo
                 notes: formData.notes,
                 totalCost: formData.totalCost,
             };
-            await updateBooking(bookingInfo);
+            const updatedBooking = await updateBooking(bookingInfo);
+            setUpdatedBooking(updatedBooking);
             toast.success("Booking updated successfully!");
             setOpen(false);
         } catch (error: any) {

@@ -130,7 +130,7 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service }) => {
                     </CardContent>
                 </Card>
                 <Button variant="outline" className="w-full">
-                    <RequestBookingDialog open={open} setOpen={setOpen} />
+                    <RequestBookingDialog open={open} setOpen={setOpen} providerProfileId={service.ProviderProfile.id} />
                 </Button>
             </div>
         </div>

@@ -22,6 +22,11 @@ export class BookingController {
     return this.bookingService.getMyBooking(req);
   }
 
+  @Get(':bookingId')
+  getBookingById(@Param('bookingId') bookingId: string) {
+    return this.bookingService.getBookingById(bookingId);
+  }
+
   @Patch('enable-chat/:id')
   @Roles(UserRole.ADMIN)
   enableChat(@Param('id') id: string) {

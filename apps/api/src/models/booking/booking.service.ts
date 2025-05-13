@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { RequestBookingDto } from './dto/request-booking.dto';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { BookingStatus, ChatStatus } from '@prisma/client';
@@ -27,6 +27,23 @@ export class BookingService {
         userId
       }
     });
+    return booking;
+  }
+
+  async getBookingById(bookingId: string) {
+    console.log("here is the booking id: ", bookingId);
+    const booking = await this.prisma.booking.findUnique({
+      where: { id: +bookingId },
+      include: {
+        providerProfile: true,
+        service: true,
+        client: true,
+      }
+    });
+
+    if (!booking) {
+      throw new NotFoundException("Booking not found");
+    }
     return booking;
   }
 

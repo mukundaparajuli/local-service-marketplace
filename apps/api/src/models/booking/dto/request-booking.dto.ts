@@ -18,4 +18,7 @@ export class RequestBookingDto {
 
     @IsNumber()
     serviceId!: number;
+
+    @IsNumber()
+    providerProfileId!: number;
 }
