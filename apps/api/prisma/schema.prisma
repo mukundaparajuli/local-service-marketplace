@@ -1,211 +1,17 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// Improved Prisma schema with better structure, naming, and clarity
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
+// Prisma Generator
 generator client {
   provider = "prisma-client-js"
 }
 
+// Data Source
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id           Int              @id @default(autoincrement())
-  email        String           @unique
-  password     String
-  firstName    String?
-  lastName     String?
-  username     String           @unique
-  phoneNumber  String?
-  profileImage String?
-  isActive     Boolean          @default(true)
-  role         UserRole         @default(CUSTOMER)
-  profile      ProviderProfile?
-  isVerified   Boolean          @default(false)
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
-
-  // relationships
-  bookings         Booking[] @relation("ClientBookings")
-  reviews          Review[]
-  // Service          ServiceOffering[]
-  sentMessages     Message[] @relation(name: "SentMessages")
-  receivedMessages Message[] @relation(name: "ReceivedMessages")
-  payments         Payment[]
-}
-
-model ProviderProfile {
-  id                Int      @id @default(autoincrement())
-  businessName      String
-  description       String   @db.Text
-  address           String?
-  city              String
-  state             String
-  zipCode           String?
-  latitude          Float?
-  longitude         Float?
-  operatingHours    Json?
-  serviceRadius     Int? //service radius in miles/ kilometers
-  acceptsHomeVisits Boolean  @default(false)
-  hasPhysicalStore  Boolean  @default(false)
-  isKYCVerified     Boolean  @default(false)
-  isBlocked         Boolean  @default(false)
-  averageRating     Float
-  totalReviews      Int      @default(0)
-  contactInfo       Json? //{phone?, website?, socialmedialinks?}
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  // relationships
-  user                  User                    @relation(fields: [userId], references: [id])
-  userId                Int                     @unique
-  serviceOfferings      ServiceOffering[]
-  serviceLocations      ServiceLocation[]
-  Booking               Booking[]               @relation("ProviderBookings")
-  CategoriesOnProviders CategoriesOnProviders[]
-  payments              Payment[]
-  reviews               Review[]
-}
-
-model ServiceOffering {
-  id          Int         @id @default(autoincrement())
-  name        String
-  description String
-  price       Decimal     @db.Decimal(10, 2)
-  pricingType PricingType
-  duration    Int? //estimated duration in minutes
-  isActive    Boolean     @default(true)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-
-  ProviderProfile      ProviderProfile?    @relation(fields: [providerProfileId], references: [id])
-  providerProfileId    Int?
-  Booking              Booking[]
-  ServiceSubCategory   ServiceSubCategory? @relation(fields: [serviceSubCategoryId], references: [id])
-  serviceSubCategoryId String?
-}
-
-model ServiceCategory {
-  id          String   @id @default(uuid())
-  name        String   @unique
-  description String?  @db.Text
-  icon        String?
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  providers     CategoriesOnProviders[]
-  subCategories ServiceSubCategory[]
-}
-
-model ServiceSubCategory {
-  id          String   @id @default(uuid())
-  name        String
-  description String?  @db.Text
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  category   ServiceCategory   @relation(fields: [categoryId], references: [id])
-  categoryId String
-  services   ServiceOffering[]
-
-  @@unique([name, categoryId])
-}
-
-model CategoriesOnProviders {
-  provider   ProviderProfile @relation(fields: [providerId], references: [id], onDelete: Cascade)
-  providerId Int
-  category   ServiceCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  categoryId String
-  assignedAt DateTime        @default(now())
-
-  @@id([providerId, categoryId])
-}
-
-model Booking {
-  id               Int           @id @default(autoincrement())
-  status           BookingStatus
-  totalCost        Decimal       @db.Decimal(10, 2)
-  scheduledDate    DateTime
-  scheduledEndTime DateTime
-  location         String? //address or provider location
-  notes            String?       @db.Text
-  chatStatus       ChatStatus    @default(PENDING)
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
-
-  client            User?            @relation("ClientBookings", fields: [userId], references: [id])
-  userId            Int?
-  providerProfile   ProviderProfile? @relation("ProviderBookings", fields: [providerProfileId], references: [id])
-  providerProfileId Int?
-  service           ServiceOffering? @relation(fields: [serviceId], references: [id])
-  serviceId         Int?
-  payment           Payment?
-  review            Review?
-}
-
-model Payment {
-  id                 String        @id @default(uuid())
-  amount             Decimal       @db.Decimal(10, 2)
-  status             PaymentStatus @default(PENDING)
-  paymentMethod      String?
-  transactionId      String
-  transactionDetails Json?
-  createdAt          DateTime      @default(now())
-
-  booking           Booking         @relation(fields: [bookingId], references: [id])
-  bookingId         Int             @unique
-  paidBy            User            @relation(fields: [userId], references: [id])
-  userId            Int
-  paidTo            ProviderProfile @relation(fields: [providerProfileId], references: [id])
-  providerProfileId Int
-}
-
-model Review {
-  id        String   @id @default(uuid())
-  rating    Int
-  comment   String?  @db.Text
-  createdAt DateTime @default(now())
-
-  User              User            @relation(fields: [userId], references: [id])
-  userId            Int
-  provider          ProviderProfile @relation(fields: [providerProfileId], references: [id])
-  providerProfileId Int
-  Booking           Booking         @relation(fields: [bookingId], references: [id])
-  bookingId         Int             @unique
-}
-
-model ServiceLocation {
-  id        Int     @id @default(autoincrement())
-  address   String
-  city      String
-  state     String
-  zipCode   String
-  latitude  Float?
-  longitude Float?
-  isPrimary Boolean @default(false)
-
-  ProviderProfile   ProviderProfile? @relation(fields: [providerProfileId], references: [id])
-  providerProfileId Int?
-}
-
-model Message {
-  id        String   @id @default(uuid())
-  content   String   @db.Text
-  isRead    Boolean  @default(false)
-  createdAt DateTime @default(now())
-
-  sender     User @relation("SentMessages", fields: [senderId], references: [id])
-  senderId   Int
-  receiver   User @relation("ReceivedMessages", fields: [receiverId], references: [id])
-  receiverId Int
-}
-
+// ENUMS
 enum UserRole {
   CUSTOMER
   PROVIDER
@@ -236,4 +42,219 @@ enum PaymentStatus {
 enum ChatStatus {
   PENDING
   ENABLED
+}
+
+// USER MODELS
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  password     String
+  firstName    String?
+  lastName     String?
+  username     String   @unique
+  phoneNumber  String?
+  profileImage String?
+  isActive     Boolean  @default(true)
+  role         UserRole @default(CUSTOMER)
+  isVerified   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  profile          ProviderProfile?
+  bookings         Booking[]        @relation("ClientBookings")
+  reviews          Review[]
+  sentMessages     Message[]        @relation("SentMessages")
+  receivedMessages Message[]        @relation("ReceivedMessages")
+  payments         Payment[]
+  conversations    Conversation[]
+}
+
+model ProviderProfile {
+  id                Int      @id @default(autoincrement())
+  businessName      String
+  description       String   @db.Text
+  address           String?
+  city              String
+  state             String
+  zipCode           String?
+  latitude          Float?
+  longitude         Float?
+  operatingHours    Json?
+  serviceRadius     Int?
+  acceptsHomeVisits Boolean  @default(false)
+  hasPhysicalStore  Boolean  @default(false)
+  isKYCVerified     Boolean  @default(false)
+  isBlocked         Boolean  @default(false)
+  averageRating     Float    @default(0)
+  totalReviews      Int      @default(0)
+  contactInfo       Json?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  userId           Int                     @unique
+  user             User                    @relation(fields: [userId], references: [id])
+  serviceOfferings ServiceOffering[]
+  serviceLocations ServiceLocation[]
+  bookings         Booking[]               @relation("ProviderBookings")
+  categories       CategoriesOnProviders[]
+  payments         Payment[]
+  reviews          Review[]
+}
+
+model ServiceOffering {
+  id          Int         @id @default(autoincrement())
+  name        String
+  description String
+  price       Decimal     @db.Decimal(10, 2)
+  pricingType PricingType
+  duration    Int?
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  providerProfileId Int?
+  providerProfile   ProviderProfile? @relation(fields: [providerProfileId], references: [id])
+
+  serviceSubCategoryId String?
+  serviceSubCategory   ServiceSubCategory? @relation(fields: [serviceSubCategoryId], references: [id])
+
+  bookings Booking[]
+}
+
+model ServiceCategory {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?  @db.Text
+  icon        String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  providers     CategoriesOnProviders[]
+  subCategories ServiceSubCategory[]
+}
+
+model ServiceSubCategory {
+  id          String   @id @default(uuid())
+  name        String
+  description String?  @db.Text
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  categoryId String
+  category   ServiceCategory   @relation(fields: [categoryId], references: [id])
+  services   ServiceOffering[]
+
+  @@unique([name, categoryId])
+}
+
+model CategoriesOnProviders {
+  providerId Int
+  categoryId String
+  assignedAt DateTime @default(now())
+
+  provider ProviderProfile @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  category ServiceCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([providerId, categoryId])
+}
+
+model Booking {
+  id               Int           @id @default(autoincrement())
+  status           BookingStatus
+  totalCost        Decimal       @db.Decimal(10, 2)
+  scheduledDate    DateTime
+  scheduledEndTime DateTime
+  location         String?
+  notes            String?       @db.Text
+  chatStatus       ChatStatus    @default(PENDING)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  userId Int?
+  client User? @relation("ClientBookings", fields: [userId], references: [id])
+
+  providerProfileId Int?
+  providerProfile   ProviderProfile? @relation("ProviderBookings", fields: [providerProfileId], references: [id])
+
+  serviceId Int?
+  service   ServiceOffering? @relation(fields: [serviceId], references: [id])
+
+  payment       Payment?
+  review        Review?
+  messages      Message[]
+  conversations Conversation[]
+}
+
+model Payment {
+  id                 String          @id @default(uuid())
+  amount             Decimal         @db.Decimal(10, 2)
+  status             PaymentStatus   @default(PENDING)
+  paymentMethod      String?
+  transactionId      String
+  transactionDetails Json?
+  bookingId          Int             @unique
+  booking            Booking         @relation(fields: [bookingId], references: [id])
+  userId             Int
+  paidBy             User            @relation(fields: [userId], references: [id])
+  providerProfileId  Int
+  paidTo             ProviderProfile @relation(fields: [providerProfileId], references: [id])
+  createdAt          DateTime        @default(now())
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  rating    Int
+  comment   String?  @db.Text
+  createdAt DateTime @default(now())
+
+  userId Int
+  User   User @relation(fields: [userId], references: [id])
+
+  providerProfileId Int
+  provider          ProviderProfile @relation(fields: [providerProfileId], references: [id])
+
+  bookingId Int     @unique
+  Booking   Booking @relation(fields: [bookingId], references: [id])
+}
+
+model ServiceLocation {
+  id        Int     @id @default(autoincrement())
+  address   String
+  city      String
+  state     String
+  zipCode   String
+  latitude  Float?
+  longitude Float?
+  isPrimary Boolean @default(false)
+
+  providerProfileId Int?
+  ProviderProfile   ProviderProfile? @relation(fields: [providerProfileId], references: [id])
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  content   String   @db.Text
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  senderId       Int
+  sender         User          @relation("SentMessages", fields: [senderId], references: [id])
+  receiverId     Int
+  receiver       User          @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  bookingId      Int?
+  booking        Booking?      @relation(fields: [bookingId], references: [id])
+  conversationId Int?
+  conversation   Conversation? @relation(fields: [conversationId], references: [id])
+}
+
+model Conversation {
+  id           Int       @id @default(autoincrement())
+  participants User[]
+  bookingId    Int?
+  booking      Booking?  @relation(fields: [bookingId], references: [id])
+  messages     Message[]
+
+  createdAt DateTime @default(now())
 }

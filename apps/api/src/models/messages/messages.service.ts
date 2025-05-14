@@ -2,8 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import { PrismaService } from 'src/common/prisma/prisma.service';
-import { WebSocketServer } from '@nestjs/websockets';
-import { Server } from 'http';
+
 
 @Injectable()
 export class MessagesService {
