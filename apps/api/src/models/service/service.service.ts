@@ -95,7 +95,7 @@ export class ServiceService {
   async getAllServices() {
     const services = await this.prisma.serviceOffering.findMany({
       include: {
-        ProviderProfile: {
+        providerProfile: {
           select: {
             id: true,
             businessName: true,

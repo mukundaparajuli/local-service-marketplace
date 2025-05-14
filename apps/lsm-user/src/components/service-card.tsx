@@ -12,7 +12,7 @@ type Service = {
     duration: number;
     isActive: boolean;
     imageUrl?: string;
-    ProviderProfile: {
+    providerProfile: {
         id: number;
         businessName: string;
         address: string | null;
@@ -68,7 +68,7 @@ export default function ServiceCard({ service }: { service: Service }) {
 
                 <CardHeader>
                     <h2 className="text-xl font-bold tracking-tight text-foreground">{service.name}</h2>
-                    <p className="text-sm text-muted-foreground">{service.ProviderProfile.businessName}</p>
+                    <p className="text-sm text-muted-foreground">{service.providerProfile.businessName}</p>
                 </CardHeader>
 
                 <CardContent className="space-y-2">
@@ -97,13 +97,13 @@ export default function ServiceCard({ service }: { service: Service }) {
                     <div className="flex flex-col w-full gap-2">
                         <div className="flex items-start gap-2">
                             <Building2 className="h-4 w-4 text-muted-foreground mt-0.5" />
-                            <span className="text-sm text-muted-foreground">{service.ProviderProfile.businessName}</span>
+                            <span className="text-sm text-muted-foreground">{service.providerProfile.businessName}</span>
                         </div>
 
-                        {service.ProviderProfile.address && (
+                        {service.providerProfile.address && (
                             <div className="flex items-start gap-2">
                                 <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
-                                <span className="text-sm text-muted-foreground">{service.ProviderProfile.address}</span>
+                                <span className="text-sm text-muted-foreground">{service.providerProfile.address}</span>
                             </div>
                         )}
                     </div>

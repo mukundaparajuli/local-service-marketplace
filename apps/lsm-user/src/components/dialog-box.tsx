@@ -6,7 +6,7 @@ import { requestBooking } from "../../actions/request-booking";
 import { toast } from "sonner";
 import { DialogBoxTemplate } from "./dialog-box-template";
 
-export function RequestBookingDialog({ open, setOpen }: { open: boolean, setOpen: (open: boolean) => void }) {
+export function RequestBookingDialog({ open, setOpen, providerProfileId }: { open: boolean, setOpen: (open: boolean) => void, providerProfileId: number }) {
     const [loading, setLoading] = useState<boolean>(false);
     const [formData, setFormData] = useState({
         scheduledDate: "",
@@ -14,6 +14,7 @@ export function RequestBookingDialog({ open, setOpen }: { open: boolean, setOpen
         location: "",
         notes: "",
         totalCost: 0,
+        providerProfileId: providerProfileId,
     });
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
