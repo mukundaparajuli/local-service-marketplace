@@ -7,6 +7,8 @@ import { JWT_SECRET_KEY } from "../../constants/env.constants"
 export class JwtAuthGuard implements CanActivate {
     constructor(private jwtService: JwtService) { }
 
+
+
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request: Request = context.switchToHttp().getRequest();
         const token = this.extractTokenFromHeader(request);
@@ -38,6 +40,8 @@ export class JwtAuthGuard implements CanActivate {
         }
         console.log(request.cookies);
         if (request.cookies && request.cookies.token) {
+
+            console.log("token is here: ", request.cookies.token);
             return request.cookies.token;
         }
         return undefined;

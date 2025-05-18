@@ -182,7 +182,6 @@ model Booking {
   service   ServiceOffering? @relation(fields: [serviceId], references: [id])
 
   payment       Payment?
-  // [MermaidChart: 262e0ce3-2556-4ff8-84c0-0bab01d96133]
   review        Review?
   messages      Message[]
   conversations Conversation[]

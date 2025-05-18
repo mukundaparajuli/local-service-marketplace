@@ -6,7 +6,7 @@ import { requestBooking } from "../../actions/request-booking";
 import { toast } from "sonner";
 import { DialogBoxTemplate } from "./dialog-box-template";
 
-export function RequestBookingDialog({ open, setOpen, providerProfileId }: { open: boolean, setOpen: (open: boolean) => void, providerProfileId: number }) {
+export function RequestBookingDialog({ open, setOpen, providerProfileId, serviceId }: { open: boolean, setOpen: (open: boolean) => void, providerProfileId: number, serviceId: number }) {
     const [loading, setLoading] = useState<boolean>(false);
     const [formData, setFormData] = useState({
         scheduledDate: "",
@@ -15,6 +15,7 @@ export function RequestBookingDialog({ open, setOpen, providerProfileId }: { ope
         notes: "",
         totalCost: 0,
         providerProfileId: providerProfileId,
+        serviceId: serviceId,
     });
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -40,6 +41,8 @@ export function RequestBookingDialog({ open, setOpen, providerProfileId }: { ope
                 location: formData.location,
                 notes: formData.notes,
                 totalCost: formData.totalCost,
+                serviceId: formData.serviceId,
+                providerProfileId: formData.providerProfileId,
             };
             await requestBooking(bookingInfo);
             toast.success("Booking request registered successfully!");
@@ -59,7 +62,7 @@ export function RequestBookingDialog({ open, setOpen, providerProfileId }: { ope
         <DialogBoxTemplate
             open={open}
             setOpen={setOpen}
-            title="Request a Booking"
+            title="Update Service"
             description="Fill in the details to request a booking. Click save when you're done."
             onSubmit={handleBooking}
             submitButtonText="Save Booking"

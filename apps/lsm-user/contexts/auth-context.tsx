@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { getMyProfile } from '../actions/get-myprofile';
 import { login } from '../actions/login';
 import { logout } from '../actions/logout';
+import { redirect } from 'next/navigation';
 
 interface User {
     id: string;
@@ -14,7 +15,6 @@ interface User {
 interface AuthContextType {
     user: User | null;
     loading: boolean;
-    error: string | null;
     login: (credentials: { identifier: string; password: string }) => Promise<void>;
     logout: () => Promise<void>;
 }
@@ -24,35 +24,34 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchUserProfile = async () => {
             try {
-                setError(null);
+                console.log("fetching user profile")
                 const userProfile = await getMyProfile();
                 setUser(userProfile);
             } catch (error: any) {
                 console.error('Failed to fetch user profile:', error);
-                setError(error.message);
                 setUser(null);
+                redirect('/login');
             } finally {
                 setLoading(false);
             }
         };
+        console.log("user is here", user)
 
-        fetchUserProfile();
+        !user && fetchUserProfile();
     }, []);
 
     const loginUser = async (credentials: { identifier: string; password: string }) => {
         try {
             setLoading(true);
-            setError(null);
             const user = await login(credentials);
             setUser(user);
+            return user;
         } catch (error: any) {
             console.error('Login error:', error);
-            setError(error.message);
             throw error;
         } finally {
             setLoading(false);
@@ -62,12 +61,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const logoutUser = async () => {
         try {
             setLoading(true);
-            setError(null);
             await logout();
             setUser(null);
         } catch (error: any) {
             console.error('Logout error:', error);
-            setError(error.message);
             throw error;
         } finally {
             setLoading(false);
@@ -77,7 +74,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const value: AuthContextType = {
         user,
         loading,
-        error,
         login: loginUser,
         logout: logoutUser,
     };

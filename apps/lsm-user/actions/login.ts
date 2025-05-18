@@ -11,7 +11,7 @@ export const login = async (loginData: loginDataType) => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            credentials: "include"
+            credentials: "include" as RequestCredentials
         });
 
         const data = await response.json();
@@ -23,8 +23,6 @@ export const login = async (loginData: loginDataType) => {
         if (!data || !data.user) {
             throw new Error('Invalid response from server');
         }
-
-        document.cookie = `auth-state=true; path=/; max-age=${60 * 60 * 24 * 7}`;
         return data.user;
     } catch (err: any) {
         console.error('Login error:', err);

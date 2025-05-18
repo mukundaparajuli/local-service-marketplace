@@ -27,6 +27,7 @@ export class BookingService {
         userId
       }
     });
+    this.logger.log(`Booking created: `, { booking });
     return booking;
   }
 
@@ -59,6 +60,9 @@ export class BookingService {
     const bookings = await this.prisma.booking.findMany({
       where: {
         userId: userId,
+      },
+      orderBy: {
+        createdAt: 'desc'
       }
     })
     return { bookings };

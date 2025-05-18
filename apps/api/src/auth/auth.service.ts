@@ -61,7 +61,7 @@ export class AuthService {
         return null;
     }
 
-    async login(data: LoginDto, res: Response): Promise<any> {
+    async login(data: LoginDto, res: Response, req: Request): Promise<any> {
         const user = await this.validateUser(data.identifier, data.password);
 
         if (!user) {
@@ -75,12 +75,15 @@ export class AuthService {
         }
 
         const token = this.jwtService.sign(payload);
+        req.user = user;
+
+        console.log("user is here: ", req.user);
 
         res.cookie('token', token, {
             httpOnly: false,
             secure: false,
             sameSite: "lax",
-            maxAge: 60 * 60 * 24 * 7,
+            maxAge: 1000 * 60 * 60 * 24 * 7,
             domain: "localhost"
         });
 
@@ -98,16 +101,8 @@ export class AuthService {
 
 
     async getMe(req: Request): Promise<any> {
-        const token = req.cookies?.token;
-        if (!token) {
-            throw new UnauthorizedException('Missing or invalid token');
-        }
-
-        const decodedToken = this.jwtService.verify(token as string);
-        this.logger.log('Decoded token:', decodedToken);
-        const user = await this.userService.findOne(decodedToken.sub);
-        this.logger.log('User:', user);
-
+        const user = req.user;
+        console.log("user is here: ", user);
         if (!user) {
             throw new UnauthorizedException('User not found');
         }

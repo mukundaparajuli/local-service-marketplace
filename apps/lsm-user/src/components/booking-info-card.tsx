@@ -124,8 +124,10 @@ export default function BookingCard({ booking }: BookingCardProps) {
                     </Button>
                     <Button
                         variant="outline"
-                        className="flex-1"
+                        className={`flex-1 ${booking.chatStatus === 'PENDING' ? 'bg-gray-300 cursor-not-allowed' : ''}`}
                         onClick={handleChatRedirection}
+                        disabled={booking.chatStatus === 'PENDING'}
+
                     >
                         <MessageSquare className="h-4 w-4 mr-2" />
                         Chat Now

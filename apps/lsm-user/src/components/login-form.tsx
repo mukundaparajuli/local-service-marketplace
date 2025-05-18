@@ -36,7 +36,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
     }
 
     try {
-      await login({ identifier, password })
+      const loginResponse = await login({ identifier, password })
+      console.log("loginResponse", loginResponse);
       toast.success("Logged in successfully!")
       router.push("/dashboard")
     } catch (error: any) {

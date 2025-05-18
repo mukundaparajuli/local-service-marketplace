@@ -147,79 +147,88 @@ export default function ChatBox({ bookingId }: { bookingId: string }) {
 
     if (!booking) {
         return (
-            <Card className="w-full h-96 flex items-center justify-center">
+            <Card className="w-full h-full flex items-center justify-center">
                 <p className="text-muted-foreground">Loading chat...</p>
             </Card>
         );
     }
 
     return (
-        <Card className="w-4/5 h-full flex flex-col mt-10">
-            <CardHeader className="border-b px-4 py-3 flex flex-row items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <Avatar>
-                        <AvatarFallback>{booking.providerProfile.businessName.charAt(0)}</AvatarFallback>
-                        <AvatarImage src={booking.providerProfile.profileImageUrl} />
-                    </Avatar>
-                    <div>
-                        <h3 className="font-semibold">{booking.providerProfile.businessName}</h3>
-                        <p className="text-xs text-muted-foreground">{booking.service.name}</p>
-                    </div>
-                </div>
-                <Badge variant={booking.status === "PENDING" ? "outline" :
-                    booking.status === "CONFIRMED" ? "secondary" :
-                        booking.status === "COMPLETED" ? "default" : "destructive"}>
-                    {booking.status}
-                </Badge>
-            </CardHeader>
-
-            <ScrollArea className="flex-1 p-4 min-h-[400px]">
-                <div className="flex flex-col gap-3">
-                    {messages.length === 0 ? (
-                        <div className="h-full flex items-center justify-center py-8">
-                            <p className="text-muted-foreground text-sm">No messages yet. Start the conversation!</p>
+        <div className="w-full h-full flex justify-center items-center">
+            <Card className="w-full h-full flex flex-col">
+                <CardHeader className="border-b px-4 py-3 flex flex-row items-center justify-between bg-muted sticky top-25 z-10">
+                    <div className="flex items-center gap-3">
+                        <Avatar className="h-10 w-10">
+                            <AvatarFallback className="bg-primary/10 text-primary">
+                                {booking.providerProfile.businessName.charAt(0)}
+                            </AvatarFallback>
+                            <AvatarImage src={booking.providerProfile.profileImageUrl} />
+                        </Avatar>
+                        <div>
+                            <h3 className="font-semibold text-base">{booking.providerProfile.businessName}</h3>
+                            <p className="text-xs text-muted-foreground">{booking.service.name}</p>
                         </div>
-                    ) : (
-                        messages.map((message) => (
-                            <div
-                                key={message.id}
-                                className={`flex ${message.senderId === parseInt(user?.id || '0') ? "justify-end" : "justify-start"}`}
-                            >
-                                <div
-                                    className={`max-w-[80%] rounded-lg px-4 py-2 ${message.senderId === parseInt(user?.id || '0')
-                                        ? "bg-primary text-primary-foreground"
-                                        : "bg-muted"
-                                        }`}
-                                >
-                                    <p className="text-sm">{message.content}</p>
-                                    <span className="text-xs opacity-70 block text-right mt-1">
-                                        {formatDistance(new Date(message.createdAt), new Date(), { addSuffix: true })}
-                                        {message.isRead && message.senderId === parseInt(user?.id || '0') && (
-                                            <span className="ml-2">✓✓</span>
-                                        )}
-                                    </span>
-                                </div>
-                            </div>
-                        ))
-                    )}
-                    <div ref={messagesEndRef} />
-                </div>
-            </ScrollArea>
+                    </div>
+                    <Badge variant={booking.status === "PENDING" ? "outline" :
+                        booking.status === "CONFIRMED" ? "secondary" :
+                            booking.status === "COMPLETED" ? "default" : "destructive"}>
+                        {booking.status}
+                    </Badge>
+                </CardHeader>
 
-            <CardFooter className="border-t p-3">
-                <form onSubmit={handleSendMessage} className="flex w-full gap-2">
-                    <Input
-                        placeholder="Type your message..."
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        className="flex-1"
-                        disabled={loading}
-                    />
-                    <Button type="submit" size="sm" disabled={loading || !newMessage.trim()}>
-                        Send
-                    </Button>
-                </form>
-            </CardFooter>
-        </Card>
+                <ScrollArea className="flex-1 overflow-y-auto p-4">
+                    <div className="flex flex-col gap-3 px-4">
+                        {messages.length === 0 ? (
+                            <div className="h-full flex items-center justify-center py-8">
+                                <p className="text-muted-foreground text-sm">No messages yet. Start the conversation!</p>
+                            </div>
+                        ) : (
+                            messages.map((message) => (
+                                <div
+                                    key={message.id}
+                                    className={`flex ${message.senderId === parseInt(user?.id || '0') ? "justify-end" : "justify-start"}`}
+                                >
+                                    <div
+                                        className={`max-w-[80%] rounded-lg px-4 py-2 ${message.senderId === parseInt(user?.id || '0')
+                                            ? "bg-primary text-primary-foreground rounded-br-none"
+                                            : "bg-muted rounded-bl-none"
+                                            }`}
+                                    >
+                                        <p className="text-sm break-words">{message.content}</p>
+                                        <span className="text-xs opacity-70 block text-right mt-1">
+                                            {formatDistance(new Date(message.createdAt), new Date(), { addSuffix: true })}
+                                            {message.isRead && message.senderId === parseInt(user?.id || '0') && (
+                                                <span className="ml-2 text-primary-foreground/70">✓✓</span>
+                                            )}
+                                        </span>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                        <div ref={messagesEndRef} />
+                    </div>
+                </ScrollArea>
+
+                <CardFooter className="border-t p-2 bg-muted sticky bottom-0 z-10">
+                    <form onSubmit={handleSendMessage} className="flex w-full gap-2">
+                        <Input
+                            placeholder="Type your message..."
+                            value={newMessage}
+                            onChange={(e) => setNewMessage(e.target.value)}
+                            className="flex-1 bg-background"
+                            disabled={loading}
+                        />
+                        <Button
+                            type="submit"
+                            size="sm"
+                            disabled={loading || !newMessage.trim()}
+                            className="min-w-[80px]"
+                        >
+                            {loading ? "Sending..." : "Send"}
+                        </Button>
+                    </form>
+                </CardFooter>
+            </Card>
+        </div>
     );
 }

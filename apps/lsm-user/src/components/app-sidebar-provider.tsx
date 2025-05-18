@@ -1,56 +1,48 @@
 "use client"
 
-import { Calendar, Home, Inbox, Search, Settings, User } from "lucide-react"
+import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
 
 import {
     Sidebar,
     SidebarContent,
     SidebarGroup,
     SidebarGroupContent,
-    SidebarGroupLabel,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-    SidebarTrigger,
     useSidebar,
 } from "@/components/ui/sidebar"
-import { Provider } from "@radix-ui/react-tooltip";
 
 // Menu items.
 const items = [
     {
         title: "Home",
-        url: "#",
+        url: "/provider/dashboard",
         icon: Home,
     },
     {
         title: "Inbox",
-        url: "#",
+        url: "/provider/inbox",
         icon: Inbox,
     },
     {
-        title: "My Booking",
-        url: "/dashboard/booking",
+        title: "Bookings",
+        url: "/provider/booking",
         icon: Calendar,
     },
     {
         title: "My Services",
-        url: "#",
+        url: "/provider/service",
         icon: Search,
     },
     {
         title: "Settings",
-        url: "#",
+        url: "/provider/settings",
         icon: Settings,
-    },
-    {
-        title: "Provider Profile",
-        url: "/provider/dashboard",
-        icon: User,
     },
 ]
 
-export function AppSidebar() {
+export function AppSidebarProvider() {
     const { state } = useSidebar();
     return (
         <Sidebar className="mt-28">

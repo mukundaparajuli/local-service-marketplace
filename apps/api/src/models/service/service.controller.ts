@@ -9,7 +9,7 @@ import { RoleGuard } from 'src/roles/role.guard';
 import { GetProviderServicesDto } from './dto/get-provider-services.dto';
 
 @Controller('service')
-// @UseGuards(JwtAuthGuard, RoleGuard)
+@UseGuards(JwtAuthGuard, RoleGuard)
 export class ServiceController {
   constructor(private readonly serviceService: ServiceService) { }
 
@@ -18,12 +18,6 @@ export class ServiceController {
   create(@Body() createServiceDto: CreateServiceDto, @Req() req: Request) {
     return this.serviceService.create(createServiceDto, req);
   }
-
-  @Get('provider')
-  findAll(@Body() getProviderServicesDto: GetProviderServicesDto) {
-    return this.serviceService.findAll(getProviderServicesDto);
-  }
-
 
   @Get(':serviceId')
   findOne(@Param('serviceId') serviceId: string) {
@@ -45,5 +39,18 @@ export class ServiceController {
   @Get()
   getAllServices() {
     return this.serviceService.getAllServices();
+  }
+
+  // provider
+  @Get('me')
+  @Roles(UserRole.PROVIDER)
+  getMyServices(@Req() req: Request) {
+    return this.serviceService.getMyServices(req);
+  }
+
+  @Post(':id')
+  @Roles(UserRole.PROVIDER)
+  updateService(@Param('id') id: string, @Body() updateServiceDto: UpdateServiceDto) {
+    return this.serviceService.update(+id, updateServiceDto);
   }
 }

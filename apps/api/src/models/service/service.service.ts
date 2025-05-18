@@ -1,10 +1,11 @@
 import { Injectable, Logger, Request } from '@nestjs/common';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
-import { PricingType, Service } from '@marketplace/types';
+import { PricingType, Service, UserRole } from '@marketplace/types';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { $Enums } from '@prisma/client';
 import { GetProviderServicesDto } from './dto/get-provider-services.dto';
+import { Roles } from 'src/roles/role.decorator';
 
 @Injectable()
 export class ServiceService {
@@ -53,11 +54,31 @@ export class ServiceService {
     const service = await this.prisma.serviceOffering.findUnique({
       where: {
         id: serviceId
+      },
+      include: {
+        providerProfile: {
+          select: {
+            id: true,
+            businessName: true,
+            address: true,
+            contactInfo: true,
+          }
+        }
       }
     })
+
+    if (!service) {
+      throw new Error('Service not found');
+    }
+
     this.logger.log(`Fetched the service from the database successfully: ${service}`);
     return {
-      service
+      service: {
+        ...service,
+        price: service.price.toNumber(),
+        pricingType: service.pricingType as PricingType,
+        providerId: service.providerProfileId ?? 0,
+      }
     }
   }
 
@@ -81,8 +102,6 @@ export class ServiceService {
   }
 
   async remove(id: number) {
-
-    // T0D0: Check if the service was added by the particular provider
     const deletedService = await this.prisma.serviceOffering.delete({
       where: {
         id
@@ -92,6 +111,7 @@ export class ServiceService {
     this.logger.log(`this service ${deletedService} has been deleted!`);
     return {};
   }
+
   async getAllServices() {
     const services = await this.prisma.serviceOffering.findMany({
       include: {
@@ -109,5 +129,46 @@ export class ServiceService {
     return {
       services
     }
+  }
+
+  @Roles(UserRole.PROVIDER)
+  async getMyServices(req: Request) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: req.user.id
+      },
+      include: {
+        profile: true
+      }
+    })
+
+    if (!user || !user.profile) {
+      throw new Error("Provider profile not found");
+    }
+
+    const services = await this.prisma.serviceOffering.findMany({
+      where: {
+        providerProfileId: user.profile.id
+      },
+      include: {
+        providerProfile: {
+          select: {
+            id: true,
+            businessName: true,
+            address: true,
+            contactInfo: true,
+          }
+        }
+      }
+    })
+
+    console.log("user = ", user);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    console.log("services = ", services);
+    return services;
   }
 }
