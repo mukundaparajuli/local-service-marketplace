@@ -34,33 +34,10 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service }) => {
     const [open, setOpen] = useState(false);
     const [updatedService, setUpdatedService] = useState(service);
     return (
-        <div className="w-11/12 md:w-4/5 mx-auto bg-background text-foreground shadow-xl rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800 transition-all duration-300 hover:shadow-2xl">
+        <div className="w-11/12 md:w-4/5 mx-auto bg-background text-foreground overflow-hidden transition-all duration-300 hover:shadow-2xl">
             {/* Hero Section */}
             <div className="relative">
-                {/* {service.imageUrl ? (
-                    <div className="h-80 w-full relative">
-                        <img
-                            src={service.imageUrl}
-                            alt={service.name}
-                            className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6">
-                            <Badge
-                                variant="outline"
-                                className={cn(
-                                    "text-xs font-medium px-3 py-1 rounded-full w-fit mb-2",
-                                    service.isActive
-                                        ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
-                                        : "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300"
-                                )}
-                            >
-                                {service.isActive ? "Active" : "Inactive"}
-                            </Badge>
-                            <h1 className="text-4xl font-bold text-primary-foreground">{service.name}</h1>
-                        </div>
-                    </div>
-                ) : ( */}
-                <div className="bg-gradient-to-r from-purple-500 to-indigo-600 dark:from-purple-700 dark:to-indigo-900 p-8 md:p-10 relative overflow-hidden">
+                <div className="bg-gradient-to-r from-gray-400 to-gray-700 dark:from-gray-700 dark:to-slate-400 p-8 md:p-10 relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-full opacity-10">
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,white_1px,transparent_1px)] bg-[length:20px_20px]"></div>
                     </div>
@@ -79,7 +56,6 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service }) => {
                         <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight">{service.name}</h1>
                     </div>
                 </div>
-                {/* )} */}
             </div>
 
             {/* Content Section */}

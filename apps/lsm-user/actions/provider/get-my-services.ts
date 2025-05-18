@@ -4,6 +4,7 @@ export const fetchMyServices = async () => {
         credentials: 'include',
     });
 
+    console.log("res is here", res);
     if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.message || 'Error occured while fetching services!');

@@ -55,7 +55,6 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service }) => {
                         <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight">{service.name}</h1>
                     </div>
                 </div>
-                {/* )} */}
             </div>
 
             {/* Content Section */}

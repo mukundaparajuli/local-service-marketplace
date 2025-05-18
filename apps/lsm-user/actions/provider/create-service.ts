@@ -1,6 +1,7 @@
-export const updateService = async (serviceId: string, service: any) => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/service/${serviceId}`, {
-        method: 'PATCH',
+export const createService = async (service: any) => {
+    console.log("service = ", service);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/service`, {
+        method: 'POST',
         credentials: 'include',
         body: JSON.stringify(service),
     });

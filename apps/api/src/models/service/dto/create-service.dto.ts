@@ -1,5 +1,5 @@
 import { PricingType } from "@marketplace/types";
-import { IsEnum, IsNumber, IsOptional, IsPositive, IsString, Length } from "class-validator";
+import { IsBoolean, IsEnum, IsNumber, IsOptional, IsPositive, IsString, Length } from "class-validator";
 
 export class CreateServiceDto {
     @IsString()
@@ -22,4 +22,8 @@ export class CreateServiceDto {
     @IsPositive()
     @IsOptional()
     durationInMinutes?: number;
+
+    @IsBoolean()
+    @IsOptional()
+    isActive?: boolean;
 }

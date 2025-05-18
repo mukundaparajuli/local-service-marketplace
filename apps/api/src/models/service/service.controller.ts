@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Request, BadRequestException } from '@nestjs/common';
 import { ServiceService } from './service.service';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
@@ -15,25 +15,8 @@ export class ServiceController {
 
   @Post()
   @Roles(UserRole.PROVIDER)
-  create(@Body() createServiceDto: CreateServiceDto, @Req() req: Request) {
+  create(@Request() req: Request, @Body() createServiceDto: CreateServiceDto) {
     return this.serviceService.create(createServiceDto, req);
-  }
-
-  @Get(':serviceId')
-  findOne(@Param('serviceId') serviceId: string) {
-    return this.serviceService.findOne(+serviceId);
-  }
-
-  @Roles(UserRole.PROVIDER)
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateServiceDto: UpdateServiceDto) {
-    return this.serviceService.update(+id, updateServiceDto);
-  }
-
-  @Roles(UserRole.ADMIN, UserRole.PROVIDER)
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.serviceService.remove(+id);
   }
 
   @Get()
@@ -41,16 +24,48 @@ export class ServiceController {
     return this.serviceService.getAllServices();
   }
 
-  // provider
   @Get('me')
   @Roles(UserRole.PROVIDER)
   getMyServices(@Req() req: Request) {
     return this.serviceService.getMyServices(req);
   }
 
+  @Get(':serviceId')
+  findOne(@Param('serviceId') serviceId: string) {
+    const id = parseInt(serviceId, 10);
+    if (isNaN(id)) {
+      throw new BadRequestException('Invalid service ID');
+    }
+    return this.serviceService.findOne(id);
+  }
+
+  @Roles(UserRole.PROVIDER)
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateServiceDto: UpdateServiceDto) {
+    const serviceId = parseInt(id, 10);
+    if (isNaN(serviceId)) {
+      throw new BadRequestException('Invalid service ID');
+    }
+    return this.serviceService.update(serviceId, updateServiceDto);
+  }
+
+  @Roles(UserRole.ADMIN, UserRole.PROVIDER)
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    const serviceId = parseInt(id, 10);
+    if (isNaN(serviceId)) {
+      throw new BadRequestException('Invalid service ID');
+    }
+    return this.serviceService.remove(serviceId);
+  }
+
   @Post(':id')
   @Roles(UserRole.PROVIDER)
   updateService(@Param('id') id: string, @Body() updateServiceDto: UpdateServiceDto) {
-    return this.serviceService.update(+id, updateServiceDto);
+    const serviceId = parseInt(id, 10);
+    if (isNaN(serviceId)) {
+      throw new BadRequestException('Invalid service ID');
+    }
+    return this.serviceService.update(serviceId, updateServiceDto);
   }
 }

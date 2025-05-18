@@ -1,9 +1,9 @@
 "use client"
 
-import ServiceDetail from '@/components/service-detail-page';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { getServiceById } from '../../../../../../actions/get-service-by-id';
+import ServiceDetail from '@/components/provider/service-details';
 
 const mockService = {
     id: 1,

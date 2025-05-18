@@ -18,6 +18,7 @@ export class ServiceService {
     const user = req.user;
 
     console.log("user = ", user);
+    console.log("data = ", data);
     const createdService = await this.prisma.serviceOffering.create({
       data: {
         name: data.name,

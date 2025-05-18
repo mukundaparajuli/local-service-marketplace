@@ -18,7 +18,6 @@ export class ProviderController {
     return this.providerService.create(createProviderDto, +id);
   }
 
-  @Roles(UserRole.ADMIN)
   @Get()
   findAll(): Promise<ProviderProfile[]> {
     return this.providerService.findAll();
