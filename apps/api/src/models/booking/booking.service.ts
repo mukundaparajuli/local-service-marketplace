@@ -107,4 +107,29 @@ export class BookingService {
     })
     return booking;
   }
+
+  async getProviderBookings(req: Request) {
+    const user = req.user;
+    if (!user) {
+      throw new UnauthorizedException("Unauthorized: token not found");
+    }
+    const userId = user['id'];
+
+    const providerProfile = await this.prisma.providerProfile.findUnique({
+      where: {
+        userId: userId
+      }
+    })
+
+    if (!providerProfile) {
+      throw new NotFoundException("Provider profile not found");
+    }
+
+    const bookings = await this.prisma.booking.findMany({
+      where: {
+        providerProfileId: providerProfile.id
+      }
+    })
+    return bookings;
+  }
 }

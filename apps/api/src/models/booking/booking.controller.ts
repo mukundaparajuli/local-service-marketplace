@@ -17,6 +17,13 @@ export class BookingController {
     return this.bookingService.requestBooking(req, requestBookingDto);
   }
 
+
+  // get all bookings for a provider
+  @Get('provider')
+  getProviderBookings(@Req() req: Request) {
+    return this.bookingService.getProviderBookings(req);
+  }
+
   @Get('me')
   getMyBooking(@Req() req: Request) {
     return this.bookingService.getMyBooking(req);
@@ -37,4 +44,6 @@ export class BookingController {
   updateBooking(@Req() req: Request, @Param('bookingId') bookingId: string, @Body() updateBookingDto: UpdateBookingDto) {
     return this.bookingService.updateBooking(req, updateBookingDto);
   }
+
+
 }

@@ -1,7 +1,8 @@
 "use client"
 
 import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
-
+import { usePathname } from "next/navigation"
+import React from "react"
 import {
     Sidebar,
     SidebarContent,
@@ -27,7 +28,7 @@ const items = [
     },
     {
         title: "Bookings",
-        url: "/provider/booking",
+        url: "/provider/bookings",
         icon: Calendar,
     },
     {
@@ -43,7 +44,16 @@ const items = [
 ]
 
 export function AppSidebarProvider() {
-    const { state } = useSidebar();
+    const { state, setOpen } = useSidebar();
+    const pathname = usePathname();
+
+    // Set sidebar state based on route
+    React.useEffect(() => {
+        if (pathname === "/provider/inbox") {
+            setOpen(false);
+        }
+    }, [pathname, setOpen]);
+
     return (
         <Sidebar className="mt-28">
             <SidebarContent>
