@@ -15,7 +15,7 @@ export class ServiceController {
 
   @Post()
   @Roles(UserRole.PROVIDER)
-  create(@Request() req: Request, @Body() createServiceDto: CreateServiceDto) {
+  create(@Req() req: Request, @Body() createServiceDto: CreateServiceDto) {
     return this.serviceService.create(createServiceDto, req);
   }
 

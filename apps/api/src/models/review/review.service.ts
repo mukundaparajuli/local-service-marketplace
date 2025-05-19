@@ -31,7 +31,7 @@ export class ReviewService {
     const review = await this.prisma.review.findMany({
       where: {
         // get the userid from the request object
-        userId: req.user.id,
+        userId: req.user?.id,
       }
     })
   }
@@ -56,7 +56,7 @@ export class ReviewService {
       throw new NotFoundException(`Review not found!`);
     }
 
-    if (review.userId !== req.user.id) {
+    if (review.userId !== req.user?.id) {
       throw new ForbiddenException('You are not allowed to update this review')
     }
     const updatedReview = await this.prisma.review.update({
@@ -79,7 +79,7 @@ export class ReviewService {
       throw new NotFoundException('Review not found');
     }
 
-    if (review.userId !== req.user.id) {
+    if (review.userId !== req.user?.id) {
       throw new ForbiddenException('You are not allowed to delete this review');
     }
 

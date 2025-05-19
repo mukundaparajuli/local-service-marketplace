@@ -19,6 +19,14 @@ export class ServiceService {
 
     console.log("user = ", user);
     console.log("data = ", data);
+
+    const providerProfile = await this.prisma.providerProfile.findUnique({
+      where: {
+        userId: user?.id
+      }
+    })
+
+
     const createdService = await this.prisma.serviceOffering.create({
       data: {
         name: data.name,
@@ -26,7 +34,7 @@ export class ServiceService {
         price: data.price,
         pricingType: data.pricingType as $Enums.PricingType,
         duration: data.durationInMinutes ?? null,
-        providerProfileId: user.id
+        providerProfileId: providerProfile?.id
       }
     })
     console.log("service= ", createdService);
@@ -136,7 +144,7 @@ export class ServiceService {
   async getMyServices(req: Request) {
     const user = await this.prisma.user.findUnique({
       where: {
-        id: req.user.id
+        id: req.user?.id
       },
       include: {
         profile: true
