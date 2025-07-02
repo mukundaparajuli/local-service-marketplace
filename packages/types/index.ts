@@ -64,3 +64,16 @@ export interface Service {
     isActive: boolean;
     providerId: number;
 }
+
+export enum BookingStatus {
+    PENDING = "PENDING",
+    ACCEPTED = "ACCEPTED",
+    REJECTED = "REJECTED",
+    COMPLETED = "COMPLETED",
+    CANCELLED = "CANCELLED"
+}
+
+export enum ChatStatus {
+    "ENABLED" = "ENABLED",
+    "DISABLED" = "DISABLED"
+}

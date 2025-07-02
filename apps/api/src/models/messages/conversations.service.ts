@@ -7,7 +7,7 @@ export class ConversationsService {
 
     constructor(private prisma: PrismaService) { }
 
-    async createConversation(userIds: number[], bookingId?: number) {
+    async createConversation(userIds: number[], bookingId: number) {
         this.logger.log(`Creating conversation for users: ${userIds.join(', ')}`);
 
         const conversation = await this.prisma.conversation.create({
@@ -34,7 +34,7 @@ export class ConversationsService {
         return conversation;
     }
 
-    async findOrCreateConversation(userIds: number[], bookingId?: number) {
+    async findOrCreateConversation(userIds: number[], bookingId: number) {
         this.logger.log(`Finding or creating conversation for users: ${userIds.join(', ')}`);
         // First try to find an existing conversation
         const existingConversation = await this.prisma.conversation.findFirst({
@@ -125,7 +125,12 @@ export class ConversationsService {
     }
 
     async getUserConversations(userId: number) {
-        return this.prisma.conversation.findMany({
+        this.logger.log(`Fetching conversations for user ID: ${userId}`);
+        if (!userId) {
+            this.logger.error('User ID is required to fetch conversations');
+            throw new Error('User ID is required');
+        }
+        const conversations = this.prisma.conversation.findMany({
             where: {
                 participants: {
                     some: {
@@ -165,5 +170,7 @@ export class ConversationsService {
                 createdAt: 'desc'
             }
         });
+        console.log("Conversations fetched for user:", userId, conversations);
+        return conversations;
     }
 } 

@@ -15,7 +15,7 @@ export class CreateMessageDto {
 
     @IsOptional()
     @IsNumber()
-    bookingId?: number;
+    bookingId!: number;
 
     @IsOptional()
     @IsNumber()

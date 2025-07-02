@@ -62,7 +62,7 @@ export function RequestBookingDialog({ open, setOpen, providerProfileId, service
         <DialogBoxTemplate
             open={open}
             setOpen={setOpen}
-            title="Update Service"
+            title="Request Booking"
             description="Fill in the details to request a booking. Click save when you're done."
             onSubmit={handleBooking}
             submitButtonText="Save Booking"

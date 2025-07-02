@@ -3,7 +3,6 @@ import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { PricingType, Service, UserRole } from '@marketplace/types';
 import { PrismaService } from 'src/common/prisma/prisma.service';
-import { $Enums } from '@prisma/client';
 import { GetProviderServicesDto } from './dto/get-provider-services.dto';
 import { Roles } from 'src/roles/role.decorator';
 
@@ -32,7 +31,7 @@ export class ServiceService {
         name: data.name,
         description: data.description ?? '',
         price: data.price,
-        pricingType: data.pricingType as $Enums.PricingType,
+        pricingType: data.pricingType as PricingType,
         duration: data.durationInMinutes ?? null,
         providerProfileId: providerProfile?.id
       }
@@ -80,7 +79,7 @@ export class ServiceService {
       throw new Error('Service not found');
     }
 
-    this.logger.log(`Fetched the service from the database successfully: ${service}`);
+    this.logger.log(`Fetched the services`, service);
     return {
       service: {
         ...service,

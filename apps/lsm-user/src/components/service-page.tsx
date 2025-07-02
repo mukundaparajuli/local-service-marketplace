@@ -21,7 +21,7 @@ export default function ServicePage() {
         getServices();
     }, [])
     return (
-        <div className="w-full h-full p-4 flex justify-center items-center">
+        <div >
             {Array.isArray(services) && services.map((service: any, index) => (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" key={index}>
                     <ServiceCard service={service} />

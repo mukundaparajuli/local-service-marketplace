@@ -1,9 +1,9 @@
 import { BadRequestException, Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { RequestBookingDto } from './dto/request-booking.dto';
 import { PrismaService } from 'src/common/prisma/prisma.service';
-import { BookingStatus, ChatStatus } from '@prisma/client';
 import { Request } from 'express';
 import { UpdateBookingDto } from './dto/update-booking.dto';
+import { BookingStatus, ChatStatus } from '@marketplace/types';
 
 @Injectable()
 export class BookingService {

@@ -147,7 +147,7 @@ export default function ChatBox({ bookingId }: { bookingId: string }) {
 
     if (!booking) {
         return (
-            <Card className="w-full h-full flex items-center justify-center">
+            <Card className="w-full h-full flex items-center justify-center rounded-none">
                 <p className="text-muted-foreground">Loading chat...</p>
             </Card>
         );
@@ -155,7 +155,7 @@ export default function ChatBox({ bookingId }: { bookingId: string }) {
 
     return (
         <div className="w-full h-full flex justify-center items-center">
-            <Card className="w-full h-full flex flex-col">
+            <Card className="w-full h-full flex flex-col rounded-none">
                 <CardHeader className="border-b px-4 py-3 flex flex-row items-center justify-between bg-muted sticky top-25 z-10">
                     <div className="flex items-center gap-3">
                         <Avatar className="h-10 w-10">

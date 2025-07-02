@@ -14,5 +14,5 @@ export const getMyBookings = async () => {
 
     const data = await res.json();
 
-    return data;
+    return data.bookings;
 };

@@ -7,6 +7,7 @@ import { ScrollArea } from "../../../../components/ui/scroll-area";
 import { formatDate } from "@/utils/format";
 import { useAuth } from "../../../../../contexts/auth-context";
 import { fetchBookingsForMe } from "../../../../../actions/provider/get-bookings-for-me";
+import { getMyBookings } from "../../../../../actions/get-mybookings";
 
 interface ChatItem {
     id: string;
@@ -30,9 +31,9 @@ export default function Inbox() {
             // Fetch both chats and bookings
             const [chatsResponse, bookingsData] = await Promise.all([
                 fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/conversations/user/${user?.id}`),
-                fetchBookingsForMe()
+                getMyBookings()
             ]);
-
+            console.log("bookingsData", bookingsData);
             const chats = await chatsResponse.json();
 
             // Create a map of existing chat booking IDs
@@ -54,10 +55,10 @@ export default function Inbox() {
                 })),
                 // Add bookings that don't have chats yet
                 ...bookingsData
-                    .filter((booking: any) =>
-                        !existingChatBookingIds.has(booking.id.toString()) &&
-                        booking.chatStatus === 'ENABLED'
-                    )
+                    // .filter((booking: any) =>
+                    //     !existingChatBookingIds.has(booking.id.toString()) &&
+                    //     booking.chatStatus === 'ENABLED'
+                    // )
                     .map((booking: any) => ({
                         id: `booking-${booking.id}`,
                         type: 'booking' as const,
@@ -85,9 +86,9 @@ export default function Inbox() {
     }, [user?.id]);
 
     return (
-        <div className="w-full h-full flex ">
+        <div className="w-full h-auto flex">
             {/* Chat List */}
-            <div className="w-1/3 min-w-[300px]">
+            <div className="w-1/3 min-w-[300px] m-0">
                 <CardHeader className="border-b">
                     <h2 className="text-xl font-semibold">Messages</h2>
                 </CardHeader>

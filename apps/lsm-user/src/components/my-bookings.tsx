@@ -34,7 +34,7 @@ export function MyBookings() {
     const getMyBooking = async () => {
         try {
             const bookings = await getMyBookings();
-            setBookings(bookings.bookings);
+            setBookings(bookings);
         } catch (error: any) {
             console.error(error)
             toast.error(error?.message || "Something went wrong. Please try again.")
@@ -43,7 +43,7 @@ export function MyBookings() {
         }
     }
     return (
-        <div className="w-full h-full flex flex-col gap-4 justify-center items-center m-8">
+        <div className="w-full h-full flex flex-col gap-4 justify-start items-center m-8">
             {
                 bookings.map((booking: Booking) => (
                     <BookingInfoCard booking={booking} key={booking.id} />

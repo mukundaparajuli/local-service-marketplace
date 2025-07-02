@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException, Request } from '@nestjs/common';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { $Enums, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { ProviderService } from 'src/models/provider/provider.service';
 import { ProviderProfile, UserRole } from '@marketplace/types';
@@ -20,7 +20,6 @@ export class UserService {
     const users = await this.prisma.user.findMany();
     return users;
   }
-
   async findOne(id: number) {
     const user = await this.prisma.user.findUnique({
       where: { id },
@@ -50,9 +49,7 @@ export class UserService {
       });
       return deletedUser;
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
-        throw new NotFoundException(`User with ID ${id} not found`);
-      }
+      console.log(error)
       throw error;
     }
   }
@@ -80,7 +77,7 @@ export class UserService {
 
       await prisma.user.update({
         where: { id },
-        data: { role: role as $Enums.UserRole },
+        data: { role: role as UserRole },
       });
 
       if (role === UserRole.PROVIDER) {

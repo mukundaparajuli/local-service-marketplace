@@ -243,8 +243,8 @@ model Message {
   sender         User          @relation("SentMessages", fields: [senderId], references: [id])
   receiverId     Int
   receiver       User          @relation("ReceivedMessages", fields: [receiverId], references: [id])
-  bookingId      Int?
-  booking        Booking?      @relation(fields: [bookingId], references: [id])
+  bookingId      Int
+  booking        Booking       @relation(fields: [bookingId], references: [id])
   conversationId Int?
   conversation   Conversation? @relation(fields: [conversationId], references: [id])
 }
@@ -252,8 +252,8 @@ model Message {
 model Conversation {
   id           Int       @id @default(autoincrement())
   participants User[]
-  bookingId    Int?
-  booking      Booking?  @relation(fields: [bookingId], references: [id])
+  bookingId    Int       @unique
+  booking      Booking   @relation(fields: [bookingId], references: [id])
   messages     Message[]
 
   createdAt DateTime @default(now())

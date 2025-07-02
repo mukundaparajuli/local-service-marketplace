@@ -15,6 +15,8 @@ import {
     useSidebar,
 } from "@/components/ui/sidebar"
 import { Provider } from "@radix-ui/react-tooltip";
+import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 
 // Menu items.
 const items = [
@@ -25,7 +27,7 @@ const items = [
     },
     {
         title: "Inbox",
-        url: "#",
+        url: "/dashboard/inbox",
         icon: Inbox,
     },
     {
@@ -51,7 +53,16 @@ const items = [
 ]
 
 export function AppSidebar() {
-    const { state } = useSidebar();
+    const { state, setOpen } = useSidebar();
+    const pathname = usePathname();
+
+    // Set sidebar state based on route
+    useEffect(() => {
+        if (pathname === "/dashboard/inbox") {
+            setOpen(false);
+        }
+    }, [pathname, setOpen]);
+
     return (
         <Sidebar className="mt-28">
             <SidebarContent>
