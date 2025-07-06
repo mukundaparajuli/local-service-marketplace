@@ -20,10 +20,10 @@ export const login = async (loginData: loginDataType) => {
             throw new Error(data?.message || 'An error occurred while logging in.');
         }
 
-        if (!data || !data.user) {
-            throw new Error('Invalid response from server');
+        if (!data) {
+            console.log(data);
         }
-        return data.user;
+        return data;
     } catch (err: any) {
         console.error('Login error:', err);
         throw new Error(err.message || 'Something went wrong. Please try again later.');

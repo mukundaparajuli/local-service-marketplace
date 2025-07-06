@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { AuthProvider } from '../contexts/auth-context';
+import { AuthProvider } from './contexts/auth-context';
 import { ThemeProvider } from './components/theme-provider';
 import { Toaster } from './components/ui/sonner';
 

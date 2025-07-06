@@ -8,16 +8,10 @@ type User = {
     role: string;
 }
 
-const privateRoutes = ["/dashboard", "/provider"]
+const privateRoutes = ["/dashboard", "/provider/dashboard"]
 
 export async function middleware(request: NextRequest) {
-    console.log("=== Middleware Debug ===")
-    console.log("Request URL:", request.url)
-    console.log("Pathname:", request.nextUrl.pathname)
-    console.log("Method:", request.method)
-
     if (privateRoutes.includes(request.nextUrl.pathname)) {
-        console.log("new")
         console.log("Protected route detected:", request.nextUrl.pathname)
         const user: User | null = await getMyProfile()
         console.log("User profile result:", user)
@@ -26,13 +20,6 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL("/login", request.url))
         }
     }
-
-    if (request.nextUrl.pathname === '/') {
-        console.log("Root path detected, redirecting to dashboard")
-        // return NextResponse.redirect(new URL("/dashboard", request.url))
-    }
-
-    console.log("=== Middleware Complete ===")
 }
 
 export const config = {

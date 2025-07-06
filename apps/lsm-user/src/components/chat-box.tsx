@@ -12,7 +12,7 @@ import { ScrollArea } from "./ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Badge } from "./ui/badge";
 import { formatDistance } from "date-fns";
-import { useAuth } from "../../contexts/auth-context";
+import { useAuth } from "../contexts/auth-context";
 
 interface Message {
     id: string;

@@ -5,7 +5,7 @@ import ChatBox from "../../../../components/chat-box";
 import { Card, CardContent, CardHeader } from "../../../../components/ui/card";
 import { ScrollArea } from "../../../../components/ui/scroll-area";
 import { formatDate } from "@/utils/format";
-import { useAuth } from "../../../../../contexts/auth-context";
+import { useAuth } from "../../../../contexts/auth-context";
 import { fetchBookingsForMe } from "../../../../../actions/provider/get-bookings-for-me";
 import { getMyBookings } from "../../../../../actions/get-mybookings";
 

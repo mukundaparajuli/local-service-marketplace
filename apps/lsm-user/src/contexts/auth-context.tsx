@@ -1,9 +1,9 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { getMyProfile } from '../actions/get-myprofile';
-import { login } from '../actions/login';
-import { logout } from '../actions/logout';
+import { getMyProfile } from '../../actions/get-myprofile';
+import { login } from '../../actions/login';
+import { logout } from '../../actions/logout';
 import { redirect } from 'next/navigation';
 
 interface User {
@@ -15,7 +15,7 @@ interface User {
 interface AuthContextType {
     user: User | null;
     loading: boolean;
-    login: (credentials: { identifier: string; password: string }) => Promise<void>;
+    login: (credentials: { identifier: string; password: string }) => Promise<any>;
     logout: () => Promise<void>;
 }
 

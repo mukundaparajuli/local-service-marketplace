@@ -102,7 +102,7 @@ export class AuthService {
     }
 
 
-    async validateUser(identifier: string, password: string): Promise<any> {
+    async validateUser(identifier: string, password: string): Promise<Omit<User, 'password'> | null> {
         console.log(identifier, password);
         const user = await this.prisma.user.findFirst({
             where: {
@@ -111,6 +111,9 @@ export class AuthService {
                         { email: identifier },
                         { username: identifier }
                     ]
+            },
+            include: {
+                profile: true
             }
         })
         console.log(user);
@@ -121,7 +124,7 @@ export class AuthService {
         return null;
     }
 
-    async login(data: LoginDto, res: Response, req: Request): Promise<any> {
+    async login(data: LoginDto, res: Response, req: Request): Promise<Omit<User, 'password'>> {
         const user = await this.validateUser(data.identifier, data.password);
 
         if (!user) {
@@ -147,16 +150,7 @@ export class AuthService {
             domain: "localhost"
         });
 
-        return {
-            message: 'Login successful',
-            user: {
-                id: user.id,
-                email: user.email,
-                username: user.username,
-                role: user.role,
-                token,
-            }
-        };
+        return user;
     }
 
 

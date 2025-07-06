@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Search, Menu, X, MapPin, Phone, User, ShoppingCart, ChevronDown, MessageSquare, Bell, LogOut } from 'lucide-react';
 import { ModeToggle } from './theme-dropdown';
-import { useAuth } from '../../contexts/auth-context';
+import { useAuth } from '../contexts/auth-context';
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);

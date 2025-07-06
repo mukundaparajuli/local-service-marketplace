@@ -14,7 +14,8 @@ import { Label } from "@/components/ui/label"
 import React, { FormEvent, useState } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
-import { useAuth } from "../../contexts/auth-context"
+import { useAuth } from "../contexts/auth-context"
+import { roles } from "@/constants/role.constants"
 
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
@@ -39,7 +40,12 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
       const loginResponse = await login({ identifier, password })
       console.log("loginResponse", loginResponse);
       toast.success("Logged in successfully!")
-      router.push("/dashboard")
+
+      // from the user info check role and redirect dynamically
+      const role = loginResponse.role;
+      role.includes(roles.PROVIDER) && router.push("/provider/dashboard");
+      role.includes(roles.USER) && router.push("/dashboard")
+
     } catch (error: any) {
       console.error(error)
       toast.error(error?.message || "Something went wrong. Please try again.")

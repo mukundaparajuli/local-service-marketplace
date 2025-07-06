@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../../../contexts/auth-context";
+import { useAuth } from "../../contexts/auth-context";
 import ChatBox from "../chat-box";
 
 export default function BookingChats() {

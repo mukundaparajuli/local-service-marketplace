@@ -15,6 +15,7 @@ import React, { FormEvent, useState } from "react"
 import { signIn } from "next-auth/react"
 import { register } from "../../actions/register"
 import { toast } from "sonner"
+import { registerProvider } from "../../actions/provider/provider-register"
 
 export function ProviderRegisterForm({
     className,
@@ -47,7 +48,9 @@ export function ProviderRegisterForm({
         setLoading(true)
         setError(null)
         try {
-            const result = await register({
+            const result = await registerProvider({
+                firstName,
+                lastName,
                 businessName,
                 address,
                 city,
@@ -59,6 +62,9 @@ export function ProviderRegisterForm({
                 description,
                 serviceRadius,
                 hasPhysicalStore,
+                email,
+                password,
+                username
             })
 
             if (result.error) {
