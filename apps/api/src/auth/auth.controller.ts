@@ -1,10 +1,11 @@
 import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
-import { User } from '@marketplace/types';
 import { LoginDto } from './dto/login.dto';
-import type { Request, Response } from 'express';
+import { User } from '@prisma/client';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import type { Request, Response } from 'express';
+import { RegisterProviderDto } from './dto/register-provider.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -13,8 +14,13 @@ export class AuthController {
     ) { }
 
     @Post('register')
-    async register(@Body() data: RegisterDto): Promise<User> {
+    async register(@Body() data: RegisterDto): Promise<Omit<User, 'password'>> {
         return this.authService.register(data);
+    }
+
+    @Post('register-provider')
+    async registerProvider(@Body() registerProviderDto: RegisterProviderDto): Promise<Omit<User, 'password'>> {
+        return this.authService.registerProvider(registerProviderDto)
     }
 
     @Post('login')

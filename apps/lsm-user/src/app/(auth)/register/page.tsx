@@ -1,9 +1,10 @@
 import { RegisterForm } from "@/components/register-form";
+import { ProviderRegisterForm } from "@/components/register-provider";
 
 export default function Register() {
     return (
-        <div className="w-full h-[90vh] flex justify-center items-center">
-            <RegisterForm />
+        <div className="w-full h-full flex justify-center items-center overflow-scroll">
+            <ProviderRegisterForm />
         </div>
     )
 }

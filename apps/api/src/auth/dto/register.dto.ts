@@ -1,5 +1,5 @@
 import { UserRole } from "@marketplace/types";
-import { IsEmail, IsString, MinLength } from "class-validator";
+import { IsEmail, IsPhoneNumber, IsString, MinLength } from "class-validator";
 
 export class RegisterDto {
 
@@ -21,4 +21,8 @@ export class RegisterDto {
 
     @IsString()
     role?: UserRole;
+
+    @IsPhoneNumber()
+    phoneNumber?: string;
+
 }
