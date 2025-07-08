@@ -27,6 +27,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import image from "@/assets/landingpage-image.png"
 
 export default function LandingPage() {
     return (
@@ -60,9 +61,11 @@ export default function LandingPage() {
                     </Link>
                 </nav>
                 <div className="ml-6 flex gap-3">
-                    <Button variant="outline" className="text-gray-700 hover:text-emerald-600">
-                        Sign In
-                    </Button>
+                    <Link href={"/login"}>
+                        <Button variant="outline" className="text-gray-700 hover:text-emerald-600" >
+                            Sign In
+                        </Button>
+                    </Link>
                     <Button className="bg-emerald-600 hover:bg-emerald-700 text-white">Get Started</Button>
                 </div>
                 <Button variant="ghost" size="icon" className="md:hidden ml-2">
@@ -129,7 +132,7 @@ export default function LandingPage() {
                             <div className="flex items-center justify-center">
                                 <div className="relative">
                                     <Image
-                                        src="/placeholder.svg?height=500&width=500"
+                                        src={image}
                                         width="500"
                                         height="500"
                                         alt="Local service providers at work"

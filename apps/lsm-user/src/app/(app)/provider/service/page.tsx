@@ -21,7 +21,7 @@ export default function ProviderServices() {
     }, []);
 
     return (
-        <div className="p-10">
+        <div className="p-10 mt-10">
             {
                 services.length >= 0 && services.map((service) => {
                     return (

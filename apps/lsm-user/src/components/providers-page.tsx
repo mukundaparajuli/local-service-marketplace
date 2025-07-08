@@ -22,22 +22,12 @@ export default function ProvidesPage() {
     }, []);
     return (
         <div >
-            <div className="w-full h-full p-6 flex justify-center items-center">
-                {Array.isArray(providers) && providers.map((provider: any) => (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" key={provider.id}>
-                        <ProviderCard provider={provider} />
-                        <ProviderCard provider={provider} />
-                        <ProviderCard provider={provider} />
-                        <ProviderCard provider={provider} />
-                        <ProviderCard provider={provider} />
-                        <ProviderCard provider={provider} />
-                        <ProviderCard provider={provider} />
-                        <ProviderCard provider={provider} />
-                        <ProviderCard provider={provider} />
-                    </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" >
+                {Array.isArray(providers) && providers.map((proivder: any) => (
+                    <ProviderCard provider={proivder} key={proivder.id} />
                 ))
                 }
             </div>
-        </div>
+        </div >
     )
 }

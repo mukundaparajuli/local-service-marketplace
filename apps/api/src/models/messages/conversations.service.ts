@@ -39,27 +39,7 @@ export class ConversationsService {
         // First try to find an existing conversation
         const existingConversation = await this.prisma.conversation.findFirst({
             where: {
-                AND: [
-                    {
-                        participants: {
-                            every: {
-                                id: {
-                                    in: userIds
-                                }
-                            }
-                        }
-                    },
-                    {
-                        participants: {
-                            none: {
-                                id: {
-                                    notIn: userIds
-                                }
-                            }
-                        }
-                    },
-                    bookingId ? { bookingId } : {}
-                ]
+                bookingId
             },
             include: {
                 participants: {

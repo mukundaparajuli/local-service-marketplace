@@ -61,6 +61,25 @@ export class BookingService {
       where: {
         userId: userId,
       },
+      include: {
+        conversations: {
+          select: {
+            id: true,
+            messages: true,
+          }
+        },
+        providerProfile: {
+          select: {
+            userId: true,
+            businessName: true,
+          },
+        },
+        service: {
+          select: {
+            name: true
+          }
+        },
+      },
       orderBy: {
         createdAt: 'desc'
       }

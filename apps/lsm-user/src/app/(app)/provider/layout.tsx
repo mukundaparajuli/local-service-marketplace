@@ -8,7 +8,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return (
         <div suppressHydrationWarning>
             <Header />
-            <div className="flex">
+            <div className="flex mt-30">
                 <SidebarProvider>
                     <AppSidebarProvider />
                     <SidebarTrigger />

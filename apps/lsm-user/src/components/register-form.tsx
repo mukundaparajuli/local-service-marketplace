@@ -135,7 +135,7 @@ export function RegisterForm({
                                 <div className="text-red-500 text-sm">{error}</div>
                             )}
                             <div className="flex flex-col gap-3">
-                                <Button type="submit" className="w-full" disabled={loading}>
+                                <Button type="submit" className="w-full bg-primary" disabled={loading}>
                                     {loading ? "Creating account..." : "Sign up"}
                                 </Button>
                                 <Button

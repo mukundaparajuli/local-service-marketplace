@@ -8,82 +8,62 @@ import { formatDate } from "@/utils/format";
 import { useAuth } from "../../../../contexts/auth-context";
 import { fetchBookingsForMe } from "../../../../../actions/provider/get-bookings-for-me";
 import { getMyBookings } from "../../../../../actions/get-mybookings";
+import { ChatStatus } from "@/constants/chatstatus.constant";
 
-interface ChatItem {
+type Message = {
+    bookingId: number;
+    content: string;
+    conversationId: number;
+    createdAt: string;
     id: string;
-    type: 'chat' | 'booking';
-    bookingId: string;
-    title: string;
-    subtitle: string;
-    lastMessage?: string;
-    status?: string;
-    date?: string;
+    isRead: boolean;
+    receiverId: number;
+    senderId: number;
 }
 
+type Booking = {
+    id: number;
+    serviceId: number;
+    chatStatus: string;
+    location: string;
+    notes: string;
+    providerProfileId: number;
+    scheduledDate: string;
+    scheduledEndTime: string;
+    status: string;
+    totalCost: string;
+    userId: string;
+    providerProfile: {
+        profileImageUrl: string;
+        userId: number;
+        businessName: string;
+    },
+    service: {
+        name: string;
+    }
+    conversations: Message[]
+    createdAt: string;
+    updatedAt: string;
+}
+
+
 export default function Inbox() {
-    const [chatItems, setChatItems] = useState<ChatItem[]>([]);
-    const [selectedChat, setSelectedChat] = useState<string | null>(null);
-    const { user } = useAuth();
+    const [bookings, setBookings] = useState<Booking[]>([]);
+    const [selectedChat, setSelectedChat] = useState<Booking | null>(null);
 
-    const getChatsAndBookings = async () => {
-        console.log("getChatsAndBookings");
+    const getAllBookings = async () => {
         try {
-            // Fetch both chats and bookings
-            const [chatsResponse, bookingsData] = await Promise.all([
-                fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/conversations/user/${user?.id}`),
-                getMyBookings()
-            ]);
-            console.log("bookingsData", bookingsData);
-            const chats = await chatsResponse.json();
-
-            // Create a map of existing chat booking IDs
-            const existingChatBookingIds = new Set(
-                chats.map((chat: any) => chat.bookingId?.toString())
-            );
-
-            // Combine chats and bookings into a single list
-            const combinedItems: ChatItem[] = [
-                // Add existing chats
-                ...chats && chats.map((chat: any) => ({
-                    id: chat.id.toString(),
-                    type: 'chat' as const,
-                    bookingId: chat.bookingId?.toString() || '',
-                    title: `${chat.participants.find((p: any) => p.id !== user?.id)?.firstName || 'User'} ${chat.participants.find((p: any) => p.id !== user?.id)?.lastName || ''
-                        }`,
-                    subtitle: chat.messages[0]?.content || 'No messages yet',
-                    lastMessage: chat.messages[0]?.content
-                })),
-                // Add bookings that don't have chats yet
-                ...bookingsData
-                    // .filter((booking: any) =>
-                    //     !existingChatBookingIds.has(booking.id.toString()) &&
-                    //     booking.chatStatus === 'ENABLED'
-                    // )
-                    .map((booking: any) => ({
-                        id: `booking-${booking.id}`,
-                        type: 'booking' as const,
-                        bookingId: booking.id.toString(),
-                        title: `Booking #${booking.id}`,
-                        subtitle: `${formatDate(booking.scheduledDate)} - ${booking.status}`,
-                        status: booking.status,
-                        date: booking.scheduledDate
-                    }))
-            ];
-
-            console.log("combined items", combinedItems);
-
-
-            setChatItems(combinedItems);
+            const bookingsData = await getMyBookings();
+            console.log(bookingsData);
+            setBookings(bookingsData);
         } catch (error) {
-            console.error("Error fetching chats and bookings:", error);
+            console.log(error);
         }
     }
 
     useEffect(() => {
-        if (user?.id) {
-            getChatsAndBookings();
-        }
-    }, [user?.id]);
+        getAllBookings();
+    }, []);
 
     return (
         <div className="w-full h-auto flex">
@@ -95,21 +75,26 @@ export default function Inbox() {
                 <CardContent className="p-0">
                     <ScrollArea className="h-[calc(100vh-200px)]">
                         <div className="flex flex-col">
-                            {chatItems.length > 0 ? (
-                                chatItems.map((item) => (
+                            {bookings.length > 0 ? (
+                                bookings.map((item) => (
                                     <button
                                         key={item.id}
-                                        onClick={() => setSelectedChat(item.bookingId)}
-                                        className={`p-4 text-left hover:bg-muted transition-colors ${selectedChat === item.bookingId ? 'bg-muted' : ''
-                                            }`}
+                                        onClick={() => {
+                                            if (!item.chatStatus.includes(ChatStatus.PENDING)) {
+                                                setSelectedChat(item);
+                                                console.log("selecting...");
+                                            }
+                                        }}
+                                        className={`p-4 text-left hover:bg-muted transition-colors ${selectedChat?.id === item.id ? 'bg-muted' : ''} ${item.chatStatus.includes(ChatStatus.PENDING) ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+                                        disabled={item.chatStatus.includes(ChatStatus.PENDING)}
                                     >
                                         <div className="flex items-center gap-3">
                                             <div className="flex-1">
                                                 <h3 className="font-medium">
-                                                    {item.title}
+                                                    {item.providerProfile.businessName}
                                                 </h3>
                                                 <p className="text-sm text-muted-foreground">
-                                                    {item.subtitle}
+                                                    For {item.service.name}
                                                 </p>
                                             </div>
                                         </div>
@@ -126,7 +111,7 @@ export default function Inbox() {
             {/* Chat Window */}
             <div className="flex-1">
                 {selectedChat ? (
-                    <ChatBox bookingId={selectedChat} />
+                    <ChatBox booking={selectedChat} />
                 ) : (
                     <div className="h-full flex items-center justify-center">
                         <p className="text-muted-foreground">Select a conversation to start chatting</p>

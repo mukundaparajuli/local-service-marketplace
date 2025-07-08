@@ -34,7 +34,7 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service }) => {
     const [open, setOpen] = useState(false);
     const [updatedService, setUpdatedService] = useState(service);
     return (
-        <div className="w-11/12 md:w-4/5 mx-auto bg-background text-foreground overflow-hidden transition-all duration-300 hover:shadow-2xl">
+        <div className="w-11/12 md:w-4/5 mx-auto bg-background text-foreground overflow-hidden transition-all duration-300">
             {/* Hero Section */}
             <div className="relative">
                 <div className="bg-gradient-to-r from-gray-400 to-gray-700 dark:from-gray-700 dark:to-slate-400 p-8 md:p-10 relative overflow-hidden">
@@ -114,12 +114,18 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service }) => {
                     </CardContent>
                 </Card>
 
-                <Button
-                    variant="default"
-                    className="w-full py-6 text-lg font-medium rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-md hover:shadow-lg transition-all duration-300"
-                >
-                    <UpdateServiceDialog open={open} setOpen={setOpen} previousService={service} setUpdatedService={setUpdatedService} />
-                </Button>
+                <div className="flex w-full gap-4">
+                    <Button
+                        variant="default"
+                        className="w-1/2 py-6 text-lg font-medium rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-md hover:shadow-lg transition-all duration-300"
+                    >
+                        <UpdateServiceDialog open={open} setOpen={setOpen} previousService={service} setUpdatedService={setUpdatedService} />
+                    </Button>
+                    <Button
+                        variant="destructive"
+                        className="w-1/2 py-6 text-lg font-medium rounded-xl text-primary-foreground shadow-md hover:shadow-lg transition-all duration-300"
+                    >Delete Service</Button>
+                </div>
             </div>
         </div>
     );

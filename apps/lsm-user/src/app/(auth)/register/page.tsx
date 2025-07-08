@@ -4,7 +4,7 @@ import { ProviderRegisterForm } from "@/components/register-provider";
 export default function Register() {
     return (
         <div className="w-full h-full flex justify-center items-center overflow-scroll">
-            <ProviderRegisterForm />
+            <RegisterForm />
         </div>
     )
 }

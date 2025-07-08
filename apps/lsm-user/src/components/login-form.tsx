@@ -44,7 +44,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
       // from the user info check role and redirect dynamically
       const role = loginResponse.role;
       role.includes(roles.PROVIDER) && router.push("/provider/dashboard");
-      role.includes(roles.USER) && router.push("/dashboard")
+      role.includes(roles.CUSTOMER) && router.push("/dashboard")
 
     } catch (error: any) {
       console.error(error)
@@ -55,8 +55,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
   }
 
   return (
-    <div className={cn("flex flex-col gap-6 w-full max-w-md", className)} {...props}>
-      <Card>
+    <div className={cn("flex flex-col gap-6 w-full max-w-md ", className)} {...props}>
+      <Card >
         <CardHeader>
           <CardTitle>Login to your account</CardTitle>
           <CardDescription>
@@ -95,7 +95,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
               />
             </div>
             <div className="flex flex-col gap-3">
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white" variant="ghost" disabled={loading}>
                 {loading ? "Logging in..." : "Login"}
               </Button>
               {/* <Button

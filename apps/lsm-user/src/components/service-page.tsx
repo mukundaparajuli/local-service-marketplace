@@ -22,28 +22,12 @@ export default function ServicePage() {
     }, [])
     return (
         <div >
-            {Array.isArray(services) && services.map((service: any, index) => (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" key={index}>
-                    <ServiceCard service={service} />
-                    <ServiceCard service={service} />
-                    <ServiceCard service={service} />
-                    <ServiceCard service={service} />
-                    <ServiceCard service={service} />
-                    <ServiceCard service={service} />
-                    <ServiceCard service={service} />
-                    <ServiceCard service={service} />
-                    <ServiceCard service={service} />
-                    <ServiceCard service={service} />
-                    <ServiceCard service={service} />
-                    <ServiceCard service={service} />
-                    <ServiceCard service={service} />
-                    <ServiceCard service={service} />
-                    <ServiceCard service={service} />
-                    <ServiceCard service={service} />
-                    <ServiceCard service={service} />
-                </div>
-            ))
-            }
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" >
+                {Array.isArray(services) && services.map((service: any, index) => (
+                    <ServiceCard service={service} key={service.id} />
+                ))
+                }
+            </div>
         </div >
     )
 }
